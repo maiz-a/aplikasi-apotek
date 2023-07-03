@@ -2,39 +2,51 @@
 session_start();
 require_once '../../functions/MY_model.php';
 
-$id = $_POST['id']; 
-$no_faktur = $_POST['no_faktur']; 
-$tgl_pembelian = $_POST['tgl_pembelian']; 
-$nama_obat = $_POST['obat']; 
-$nama_satuan = $_POST['satuan']; 
-$jumlah = $_POST['jumlah']; 
-$harga = $_POST['harga']; 
-$ppn = $_POST['ppn']; 
-$total_harga = $_POST['total_harga']; 
-$nama_distributor = $_POST['distributor']; 
+session_start();
+require_once '../../functions/MY_model.php';
 
+// Mendapatkan data pembelian dari form
+$id = $_POST['id'];
+$no_faktur = $_POST['no_faktur'];
+$tgl_pembelian = $_POST['tgl_pembelian'];
+$tgl_jatuh_tempo = $_POST['tgl_jatuh_tempo'];
+$total_bayar = $_POST['total_bayar'];
+$sisa_bayar = $_POST['sisa_bayar'];
+$status = $_POST['status'];
+$distributor = $_POST['distributor'];
+$karyawan = $_POST['karyawan'];
 
-// Ambil ID obat berdasarkan nama 
-$obat = get_where("SELECT id FROM obats WHERE id = '$nama_obat'");
-$obat_id = $obat['id'];
+// Query untuk update data pembelian
+$query_pembelian = "UPDATE tb_pembelian SET no_faktur = '$no_faktur', tgl_pembelian = '$tgl_pembelian', tgl_jatuh_tempo = '$tgl_jatuh_tempo',
+                    total_bayar = '$total_bayar', sisa_bayar = '$sisa_bayar', status = '$status',
+                    distributor_id = '$distributor', karyawan_id = '$karyawan' WHERE id = '$id_pembelian'";
 
-// Ambil ID satuan berdasarkan nama user
-$satuan = get_where("SELECT id FROM satuans WHERE id = '$nama_satuan'"); 
-$satuan_id = $satuan['id'];
+// Eksekusi query pembelian
+$result_pembelian = mysqli_query($conn, $query_pembelian);
 
-// Ambil ID distributor berdasarkan nama user
-$distributor = get_where("SELECT id FROM distributors WHERE id = '$nama_distributor'"); 
-$distributor_id = $distributor['id'];
+if ($result_pembelian) {
+  // Query untuk update tanggal_update di tb_stok
+  $query_stok = "UPDATE tb_stok SET tanggal_update = '$tgl_pembelian' WHERE pembelian_id = '$id_pembelian'";
 
+  // Eksekusi query stok
+  $result_stok = mysqli_query($conn, $query_stok);
 
-$query = "UPDATE pembelians SET no_faktur = '$no_faktur', tgl_pembelian = '$tgl_pembelian', obat_id = '$obat_id', 
-          satuan_id = '$satuan_id', jumlah = '$jumlah', harga = '$harga', ppn = '$ppn', total_harga = '$total_harga', distributor_id = '$distributor_id'  
-          WHERE id = '$id'";
-
-if (update($query) === 1) {
-  echo '<script>document.location.href="../../../?page=pembelian";</script>';
+  if ($result_stok) {
+    $_SESSION['message'] = "Data pembelian berhasil diubah.";
+    header('Location: ../../../?page=pembelian');
+    exit();
+  } else {
+    $_SESSION['message'] = "Gagal mengubah data pembelian.";
+    header('Location: ../../../?page=pembelian');
+    exit();
+  }
 } else {
+  $_SESSION['message'] = "Gagal mengubah data pembelian.";
+  header('Location: ../../../?page=pembelian');
   echo mysqli_error($conn);
+  exit();
 }
+
+
 
 ?>

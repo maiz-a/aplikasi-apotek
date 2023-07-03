@@ -40,16 +40,6 @@ $obat = get_where("SELECT o.*, s.nama_distributor, k.nama_kategori, st.nama_satu
                 </div>
                 </div>
 
-                <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                    <label>Merk Obat</label>
-                  </div>
-                  <div class="col-md-8">
-                    <input type="text" placeholder="Merk Obat" class="form-control" name="merk_obat" value="<?= $obat['merk_obat']; ?>">
-                  </div>
-                </div>
-                </div>
 
                 <div class="col-12">
                     <div class="form-group row">

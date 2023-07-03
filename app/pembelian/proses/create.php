@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require_once '../../functions/MY_model.php';
 
@@ -42,86 +41,86 @@ if ($result_pembelian) {
     $potongan = $item['potongan'];
     $bayar = $item['bayar'];
 
-    // Query untuk insert data batch
-    $query_batch = "INSERT INTO tb_batch (obat_id, no_batch, tgl_exp, satuan_id)
-                    VALUES ('$obat_id', '$batch', '$exp', '$satuan_id')";
+     // Mengambil tablet_per_box dari tb_obat
+     $query_tablet_per_box = "SELECT tablet_per_box FROM tb_obat WHERE id = '$obat_id'";
+     $result_tablet_per_box = mysqli_query($conn, $query_tablet_per_box);
+ 
+     if ($row_tablet_per_box = mysqli_fetch_assoc($result_tablet_per_box)) {
+         $tablet_per_box = $row_tablet_per_box['tablet_per_box'];
+         $qty_tablet = $qty * $tablet_per_box;
+     } else {
+         // Jika gagal mendapatkan tablet_per_box, lanjutkan ke obat berikutnya
+         continue;
+     }
 
-    // Eksekusi query batch
-    $result_batch = mysqli_query($conn, $query_batch);
+    // Query untuk cek batch yang sudah ada
+    $query_check_batch = "SELECT * FROM tb_batch WHERE no_batch = '$batch'";
+    $result_check_batch = mysqli_query($conn, $query_check_batch);
 
-    if ($result_batch) {
+    if (mysqli_num_rows($result_check_batch) > 0) {
+      // Jika batch sudah ada, ambil ID batch yang sudah ada
+      $row_batch = mysqli_fetch_assoc($result_check_batch);
+      $batch_id = $row_batch['id'];
+    } else {
+      // Jika batch belum ada, insert data batch baru
+      $query_insert_batch = "INSERT INTO tb_batch (obat_id, no_batch, tgl_exp, satuan_id)
+                            VALUES ('$obat_id', '$batch', '$exp', '$satuan_id')";
+      $result_insert_batch = mysqli_query($conn, $query_insert_batch);
+
+      if (!$result_insert_batch) {
+        // Jika terjadi kesalahan dalam query insert batch, lanjutkan ke obat berikutnya
+        continue;
+      }
+
       // Mengambil ID batch terakhir yang di-generate oleh database
       $batch_id = mysqli_insert_id($conn);
+    }
 
-      // Query untuk insert detail pembelian
-      $query_det_pembelian = "INSERT INTO tb_det_pembelian (pembelian_id, batch_id, obat_id, qty, satuan_id, harga, diskon, potongan, bayar)
-                              VALUES ('$pembelian_id', '$batch_id', '$obat_id', '$qty', '$satuan_id', '$harga', '$diskon', '$potongan', '$bayar')";
+    // Query untuk cek stok yang sudah ada
+    $query_check_stok = "SELECT * FROM tb_stok WHERE obat_id = '$obat_id' AND batch_id = '$batch_id'";
+    $result_check_stok = mysqli_query($conn, $query_check_stok);
 
-      // Eksekusi query detail pembelian
-      $result_det_pembelian = mysqli_query($conn, $query_det_pembelian);
+    if (mysqli_num_rows($result_check_stok) > 0) {
+      // Jika stok sudah ada, insert tanggal pembelian dan stok akhir yang sesuai
+      $row_stok = mysqli_fetch_assoc($result_check_stok);
+      $stok_id = $row_stok['id'];
+      $stok_akhir = $row_stok['stok_akhir'] + $qty_tablet;
 
-      if ($result_det_pembelian) {
-        // Mengambil ID detail pembelian terakhir yang di-generate oleh database
-        $det_pembelian_id = mysqli_insert_id($conn);
+      $query_insert_stok = "INSERT INTO tb_stok (obat_id, batch_id, tanggal_update, jumlah_masuk, jumlah_keluar, stok_akhir)
+                          VALUES ('$obat_id', '$batch_id', '$tgl_pembelian', '$qty_tablet', '0', '$stok_akhir')";
+      $result_insert_stok = mysqli_query($conn, $query_insert_stok);
 
-        // Menghitung jumlah_masuk dan stok_akhir
-        $jumlah_masuk = $qty;
-        $jumlah_keluar = 0;
-
-        // Periksa apakah ada data stok yang sudah ada untuk obat dan batch yang bersangkutan
-        $query_check_stok = "SELECT * FROM tb_stok WHERE obat_id = '$obat_id' AND batch_id = '$batch_id'";
-        $result_check_stok = mysqli_query($conn, $query_check_stok);
-
-        if (mysqli_num_rows($result_check_stok) > 0) {
-          // Jika data stok sudah ada, update data stok
-          $row_stok = mysqli_fetch_assoc($result_check_stok);
-          $stok_id = $row_stok['id'];
-          $stok_akhir = $row_stok['stok_akhir'];
-
-          $jumlah_masuk += $row_stok['jumlah_masuk'];
-          $stok_akhir += $jumlah_masuk;
-
-          // Update data stok
-          $query_update_stok = "UPDATE tb_stok SET jumlah_masuk = '$jumlah_masuk', stok_akhir = '$stok_akhir'
-                                WHERE id = '$stok_id'";
-          $result_update_stok = mysqli_query($conn, $query_update_stok);
-
-          if (!$result_update_stok) {
-            // Jika terjadi kesalahan dalam query update stok, hapus data yang sudah diinsert sebelumnya
-            mysqli_query($conn, "DELETE FROM tb_det_pembelian WHERE id = '$det_pembelian_id'");
-            mysqli_query($conn, "DELETE FROM tb_batch WHERE id = '$batch_id'");
-
-            $_SESSION['message'] = "Gagal menyimpan data pembelian.";
-            header('Location: ../../../?page=pembelian');
-            exit();
-          }
-        } else {
-          // Jika data stok belum ada, insert data stok baru
-          $stok_akhir = $jumlah_masuk;
-
-          $query_insert_stok = "INSERT INTO tb_stok (obat_id, batch_id, tanggal, jumlah_masuk, jumlah_keluar, stok_akhir)
-                                VALUES ('$obat_id', '$batch_id', '$tgl_pembelian', '$jumlah_masuk', '$jumlah_keluar', '$stok_akhir')";
-          $result_insert_stok = mysqli_query($conn, $query_insert_stok);
-
-          if (!$result_insert_stok) {
-            // Jika terjadi kesalahan dalam query insert stok, hapus data yang sudah diinsert sebelumnya
-            mysqli_query($conn, "DELETE FROM tb_det_pembelian WHERE id = '$det_pembelian_id'");
-            mysqli_query($conn, "DELETE FROM tb_batch WHERE id = '$batch_id'");
-
-            $_SESSION['message'] = "Gagal menyimpan data pembelian.";
-            header('Location: ../../../?page=pembelian');
-            exit();
-          }
-        }
-      } else {
-        // Jika terjadi kesalahan dalam query detail pembelian, hapus data batch yang sudah diinsert sebelumnya
-        mysqli_query($conn, "DELETE FROM tb_batch WHERE id = '$batch_id'");
-
-        $_SESSION['message'] = "Gagal menyimpan data pembelian.";
-        header('Location: ../../../?page=pembelian');
-        exit();
+      if (!$result_insert_stok) {
+        // Jika terjadi kesalahan dalam query insert stok, lanjutkan ke obat berikutnya
+        continue;
       }
     } else {
+      // Jika stok belum ada, insert data stok baru
+      $jumlah_masuk = $qty_tablet;
+      $jumlah_keluar = 0;
+      $stok_akhir = $jumlah_masuk;
+
+      $query_insert_stok = "INSERT INTO tb_stok (obat_id, batch_id, tanggal_update, jumlah_masuk, jumlah_keluar, stok_akhir)
+                          VALUES ('$obat_id', '$batch_id', '$tgl_pembelian', '$jumlah_masuk', '$jumlah_keluar', '$stok_akhir')";
+      $result_insert_stok = mysqli_query($conn, $query_insert_stok);
+
+      if (!$result_insert_stok) {
+        // Jika terjadi kesalahan dalam query insert stok, lanjutkan ke obat berikutnya
+        continue;
+      }
+    }
+
+    // Query untuk insert detail pembelian
+    $query_det_pembelian = "INSERT INTO tb_det_pembelian (pembelian_id, batch_id, obat_id, qty, qty_tablet, satuan_id, harga)
+    VALUES ('$pembelian_id', '$batch_id', '$obat_id', '$qty', '$qty_tablet', '$satuan_id', '$harga')";
+
+    // Eksekusi query detail pembelian
+    $result_det_pembelian = mysqli_query($conn, $query_det_pembelian);
+
+    if (!$result_det_pembelian) {
+      // Jika terjadi kesalahan dalam query detail pembelian, hapus data batch yang sudah diinsert sebelumnya
+      mysqli_query($conn, "DELETE FROM tb_batch WHERE id = '$batch_id'");
+
       $_SESSION['message'] = "Gagal menyimpan data pembelian.";
       header('Location: ../../../?page=pembelian');
       exit();

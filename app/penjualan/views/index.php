@@ -1,9 +1,9 @@
 <?php
 require_once 'app/functions/MY_model.php';
-$tb_penjualan = get("SELECT pj.*, k.nama_karyawan
-            FROM tb_penjualan pj 
-            INNER JOIN tb_karyawan k ON pj.karyawan_id = k.id
-            ");
+
+$tb_penjualan = get("SELECT pj.* , k.nama_karyawan
+            FROM tb_penjualan pj
+            INNER JOIN tb_karyawan k ON pj.karyawan_id = k.id");
 
 $no = 1;
 
@@ -45,7 +45,7 @@ $no = 1;
                       <td><?= $penjualan['total_harga']; ?></td>
                       <td><?= $penjualan['total_bayar']; ?></td>
                       <td><?= $penjualan['kembali']; ?></td>
-                      <td><?= $penjualan['karyawan']; ?></td>
+                      <td><?= $penjualan['nama_karyawan']; ?></td>
                       <td>
                         <a href="?page=edit-penjualan&id=<?= $penjualan['id']; ?>"><i class="m-1 feather icon-edit-2"></i></a>
                         <a href="?page=hapus-penjualan&id=<?= $penjualan['id']; ?>" class="btn-hapus"><i class="feather icon-trash"></i></a>

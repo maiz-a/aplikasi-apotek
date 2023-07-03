@@ -33,7 +33,7 @@ $satuan_json = json_encode($tb_satuan);
 <section id="basic-horizontal-layouts">
   <div class="row match-height">
     <div class="col-md-12 col-12">
-      <div class="card">
+      <div class="card"> 
         <div class="card-header">
           <h4 class="card-title">Tambah Pembelian</h4>
         </div>
@@ -231,7 +231,7 @@ $satuan_json = json_encode($tb_satuan);
                       </div>
                     </div>
                   </div>
-              </div>
+              
 
               <div class="col-12">
                 <div class="form-group row">

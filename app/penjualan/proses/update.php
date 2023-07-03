@@ -4,34 +4,24 @@ require_once '../../functions/MY_model.php';
 
 $id = $_POST['id']; 
 $no_struk = $_POST['no_struk']; 
-$tgl_penjualan = $_POST['tgl_penjualan'];
-$nama_obat = $_POST['obat']; 
-$jumlah = $_POST['jumlah']; 
-$harga = $_POST['harga']; 
-$total_harga = $_POST['total_harga'];
-$username = $_POST['user'];
+$tgl_penjualan = $_POST['tgl_penjualan']; 
+$total_harga = $_POST['total_harga']; 
+$total_bayar = $_POST['total_bayar']; 
+$kembali= $_POST['kembali']; 
+$nama_karyawan = $_POST['karyawan']; 
+
+// Ambil ID karyawan berdasarkan nama karyawan
+$tb_karyawan = get_where("SELECT id FROM tb_karyawan WHERE id = '$nama_karyawan'"); 
+$karyawan_id = $tb_karyawan['id'];
 
 
-// Ambil ID obat berdasarkan nama obat
-$obat = get_where("SELECT id FROM obats WHERE id = '$nama_obat'");
-$obat_id = $obat['id'];
-
-// Ambil ID user berdasarkan nama user
-$user = get_where("SELECT id FROM users WHERE id = '$username'"); 
-$user_id = $user['id'];
-
-
-$query = "UPDATE penjualans SET no_struk = '$no_struk', tgl_penjualan = '$tgl_penjualan', obat_id = '$obat_id', 
-          jumlah = '$jumlah', harga = '$harga', total_harga = '$total_harga', user_id = '$user_id'  
+$query = "UPDATE tb_penjualan SET no_struk = '$no_struk', tgl_penjualan = '$tgl_penjualan', total_harga = '$total_harga', total_bayar = '$total_bayar', kembali = '$kembali',karyawan_id = '$karyawan_id'  
           WHERE id = '$id'";
-
+          
 if (update($query) === 1) {
   echo '<script>document.location.href="../../../?page=penjualan";</script>';
 } else {
   echo mysqli_error($conn);
 }
-
-
-
 
 ?>

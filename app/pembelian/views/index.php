@@ -36,7 +36,7 @@ $no = 1;
                     <th>Status</th>
                     <th>Total Harga</th>
                     <th>Bayar</th>
-                    <th>Sisa</th>
+                    <th>Sisa Pembayaran</th>
                     <th>Distributor</th>
                     <th>Karyawan</th>
                     <th style="text-align : center" width="80px">Aksi</th>
