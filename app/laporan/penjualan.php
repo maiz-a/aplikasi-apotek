@@ -7,17 +7,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filter'])) {
     $endDate = $_POST['end'];
 
     // Kode untuk mengambil data laporan penjualan berdasarkan rentang tanggal
-    $query = "SELECT p.tgl_penjualan, SUM(p.jumlah) AS total_jumlah, SUM(p.total_harga) AS total_pendapatan, o.nama_obat 
-              FROM penjualans p
-              INNER JOIN obats o ON p.obat_id = o.id
+    $query = "SELECT p.tgl_penjualan, SUM(dp.qty_tablet) AS total_jumlah, SUM(dp.harga) AS total_pendapatan, o.nama_obat 
+              FROM tb_penjualan p
+              INNER JOIN tb_det_penjualan dp ON p.id = dp.penjualan_id
+              INNER JOIN tb_obat o ON dp.obat_id = o.id
               WHERE p.tgl_penjualan BETWEEN '$startDate' AND '$endDate'
               GROUP BY p.tgl_penjualan
               ORDER BY p.tgl_penjualan DESC";
 } else {
     // Kode untuk mengambil 10 data terbaru dari laporan penjualan
-    $query = "SELECT p.tgl_penjualan, SUM(p.jumlah) AS total_jumlah, SUM(p.total_harga) AS total_pendapatan, o.nama_obat
-              FROM penjualans p
-              INNER JOIN obats o ON p.obat_id = o.id
+    $query = "SELECT p.tgl_penjualan, SUM(dp.qty_tablet) AS total_jumlah, SUM(dp.harga) AS total_pendapatan, o.nama_obat
+              FROM tb_penjualan p
+              INNER JOIN tb_det_penjualan dp ON p.id = dp.penjualan_id
+              INNER JOIN tb_obat o ON dp.obat_id = o.id
               GROUP BY p.tgl_penjualan
               ORDER BY p.tgl_penjualan DESC
               LIMIT 10";
@@ -25,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filter'])) {
 
 $result = mysqli_query($conn, $query);
 ?>
+
+
 
 <!-- Form Filter -->
 <form class="form" method="post" action="">

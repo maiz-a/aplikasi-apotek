@@ -1,77 +1,72 @@
 <?php
-
 require_once 'app/functions/MY_model.php';
+$tb_penjualan = get("SELECT pj.*, k.nama_karyawan
+            FROM tb_penjualan pj
+            INNER JOIN tb_det_penjualan dpj ON pj.id = dpj.penjualan_id
+            INNER JOIN tb_karyawan k ON pj.karyawan_id = k.id
+            ");
 
-$id = $_GET['id'];
+// Ambil daftar obat dari database
+$tb_obat = get("SELECT * FROM tb_obat");
+$obat_json = json_encode($tb_obat);
 
-$query_pembelian = "SELECT * FROM tb_pembelian WHERE id = '$id'";
-$result_pembelian = mysqli_query($conn, $query_pembelian);
-$row_pembelian = mysqli_fetch_assoc($result_pembelian);
+// Ambil daftar karyawan dari database
+$tb_karyawan = get("SELECT * FROM tb_karyawan");
 
-$query_det_pembelian = "SELECT * FROM tb_det_pembelian WHERE pembelian_id = '$id'";
-$result_det_pembelian = mysqli_query($conn, $query_det_pembelian);
-$row_det_pembelian = mysqli_fetch_assoc($result_det_pembelian);
+// Ambil daftar no_batch dari database
+$tb_batch = get("SELECT * FROM tb_batch");
+$batch_json = json_encode($tb_batch);
 
-$query_obat = "SELECT * FROM tb_obat";
-$result_obat = mysqli_query($conn, $query_obat);
-$row_obat = mysqli_fetch_assoc($result_obat);
+// Ambil daftar satuan dari database
+$tb_satuan = get("SELECT * FROM tb_satuan");
+$satuan_json = json_encode($tb_satuan);
 
-$query_distributor = "SELECT * FROM tb_distributor";
-$result_distributor = mysqli_query($conn, $query_distributor);
-$row_distributor = mysqli_fetch_assoc($result_distributor);
+// Mengenerate nomor struk secara otomatis
+$no_struk = generateNoStruk($conn);
 
-$query_karyawan = "SELECT * FROM tb_karyawan";
-$result_karyawan = mysqli_query($conn, $query_karyawan);
-$row_karyawan = mysqli_fetch_assoc($result_karyawan);
+// Mendefinisikan alamat URL ke file get_batch_data.php
+$getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
+
+
 ?>
 
 <div class="content-header row">
   <div class="content-header-right col-md-12">
-    <a href="?page=pembelian" class="btn btn-light float-right mb-2">Kembali</a>
+    <a href="?page=penjualan" class="btn btn-light float-right mb-2">Kembali</a>
   </div>
 </div>
 
 <section id="basic-horizontal-layouts">
   <div class="row match-height">
     <div class="col-md-12 col-12">
-      <div class="card"> 
+      <div class="card">
         <div class="card-header">
-          <h4 class="card-title">Tambah Pembelian</h4>
+          <h4 class="card-title">Tambah Penjualan</h4>
         </div>
+
         <div class="card-content">
           <div class="card-body">
-            <form action="app/pembelian/proses/create.php" method="post">
+            <form action="app/penjualan/proses/create.php" method="post">
               <div class="form-body">
                 <class="row">
                   <div class="col-12">
                     <div class="form-group row">
                       <div class="col-md-4">
-                        <label>No. Faktur </label>
+                        <label>No. Struk </label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" placeholder="No. Faktur" class="form-control" name="no_faktur" value="<?php echo $row_pembelian['no_faktur']; ?>" readonly>
-                      </div>
+                      <input type="text" placeholder="No. Struk" class="form-control" name="no_struk" value="<?php echo $no_struk; ?>" readonly>
+                    </div>
                     </div>
                   </div>
 
                   <div class="col-12">
                     <div class="form-group row">
                       <div class="col-md-4">
-                        <label>Tanggal Pembelian</label>
+                        <label>Tanggal Penjualan</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="date" placeholder="Tanggal Pembelian" class="form-control" name="tgl_pembelian" value="<?php echo $row_pembelian['tgl_pembelian']; ?>" readonly>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                        <label>Tanggal Jatuh Tempo</label>
-                      </div>
-                      <div class="col-md-8">
-                        <input type="date" placeholder="Tanggal Jatuh Tempo" class="form-control" name="tgl_jatuh_tempo" value="<?php echo $row_pembelian['tgl_jatuh_tempo']; ?>" required>
+                        <input type="date" placeholder="Tanggal Penjualan" class="form-control" name="tgl_penjualan" required>
                       </div>
                     </div>
                   </div>
@@ -84,7 +79,7 @@ $row_karyawan = mysqli_fetch_assoc($result_karyawan);
                           <label>Obat</label>
                         </div>
                         <div class="col-md-6">
-                        <select class="form-control" name="obat[0][id]" onchange="setObatId(this)" id="id" required>
+                        <select class="form-control obat-id" name="obat[0][id]" onchange="setObatId(this)" id="id" required>
                           <?php foreach ($tb_obat as $obat) : ?>
                             <option value="<?php echo $obat['id']; ?>"><?php echo $obat['nama_obat']; ?></option>
                           <?php endforeach; ?>
@@ -100,7 +95,9 @@ $row_karyawan = mysqli_fetch_assoc($result_karyawan);
                           <label>Nomor Batch</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="text" class="form-control" name="obat[0][batch]" id= "batch"  required>
+                        <select class="form-control no-batch" name="obat[0][no_batch]" onchange="setBatchId(this)" id="no_batch" required>
+                          <option value="">Pilih Nomor Batch</option>
+                        </select>
                         </div>
                         <div class="col-md-2">
                           <button type="button" class="btn btn-danger btn-sm" onclick="hapusObat(this)">Hapus</button>
@@ -109,19 +106,10 @@ $row_karyawan = mysqli_fetch_assoc($result_karyawan);
 
                       <div class="form-group row">
                         <div class="col-md-4">
-                          <label>Tanggal Expired</label>
-                        </div>
-                        <div class="col-md-6">
-                          <input type="date" class="form-control" name="obat[0][exp]" id="exp" required>
-                        </div>
-                      </div>
-
-                      <div class="form-group row">
-                        <div class="col-md-4">
                           <label>Qty</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="number" class="form-control" name="obat[0][qty]" id="qty" required>
+                          <input type="number" class="form-control" name="obat[0][qty_tablet]" id="qty_tablet" required>
                         </div>
                       </div>
 
@@ -147,59 +135,17 @@ $row_karyawan = mysqli_fetch_assoc($result_karyawan);
                         </div>
                       </div>
 
-                      <div class="form-group row">
-                        <div class="col-md-4">
-                          <label>Diskon %</label>
-                        </div>
-                        <div class="col-md-6">
-                          <input type="number" class="form-control" name="obat[0][diskon]" id="diskon" required>
-                        </div>
-                      </div>
-
-                      <div class="form-group row">
-                        <div class="col-md-4">
-                          <label>Potongan</label>
-                        </div>
-                        <div class="col-md-6">
-                          <input type="text" class="form-control" name="obat[0][potongan]" id="potongan" required>
-                        </div>
-                      </div>
-
-                    </div>
                   </div>
+                </div>
 
-                  <!-- Akhir menu per obat -->
-
-                  <div class="col-12">
+                    <!-- Menu per obat --> 
+                    <div class="col-12">
                     <div class="form-group row">
                       <div class="col-md-4">
                         <label>Total Harga</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_harga" value="<?php echo $row_pembelian['total_harga']; ?>" required>
-                      </div>
-                    </div>
-                  </div>
-
-                  
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                        <label>PPN</label>
-                      </div>
-                      <div class="col-md-8">
-                        <input type="text" class="form-control" name="ppn"  value="<?php echo $row_pembelian['ppn']; ?>" required>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                        <label>Total Tagihan</label>
-                      </div>
-                      <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_tagihan"  value="<?php echo $row_pembelian['total_tagihan']; ?>" required>
+                        <input type="text" class="form-control" name="total_harga" required>
                       </div>
                     </div>
                   </div>
@@ -210,7 +156,7 @@ $row_karyawan = mysqli_fetch_assoc($result_karyawan);
                         <label>Total Bayar</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_bayar"  value="<?php echo $row_pembelian['total_bayar']; ?>" required>
+                        <input type="text" class="form-control" name="total_bayar" required>
                       </div>
                     </div>
                   </div>
@@ -218,45 +164,13 @@ $row_karyawan = mysqli_fetch_assoc($result_karyawan);
                   <div class="col-12">
                     <div class="form-group row">
                       <div class="col-md-4">
-                        <label>Sisa Pembayaran</label>
+                        <label>Sisa Kembalian</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" class="form-control" name="sisa_bayar"  value="<?php echo $row_pembelian['sisa_bayar']; ?>" required>
+                        <input type="text" class="form-control" name="kembali" required>
                       </div>
                     </div>
                   </div>
-
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                        <label>Status</label>
-                      </div>
-                      <div class="col-md-8">
-                        <select class="form-control" name="status" required>
-                          <?php
-                          // Ambil opsi status dari database
-                          $statusOptions = ["LUNAS", "BELUM LUNAS"];
-
-                          // Loop melalui setiap opsi status
-                          foreach ($statusOptions as $option) {
-                            echo '<option value="' . $option . '">' . $option . '</option>';
-                          }
-                          ?>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-              
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                  <label>Distributor</label>
-                </div>
-                <div class="col-md-8">
-                <input type="text" class="form-control" name="nama_distributor" value="<?php echo $row_distributor['nama_distributor']; ?>" readonly>
-                </div>
-              </div>
-              </div>
 
               <div class="col-12">
                 <div class="form-group row">
@@ -264,7 +178,11 @@ $row_karyawan = mysqli_fetch_assoc($result_karyawan);
                     <label>Karyawan</label>
                   </div>
                   <div class="col-md-8">
-                  <input type="text" class="form-control" name="nama_karyawan" value="<?php echo $row_karyawan['nama_karyawan']; ?>" readonly>
+                    <select class="form-control" name="karyawan" required>
+                      <?php foreach ($tb_karyawan as $karyawan) : ?>
+                        <option value="<?php echo $karyawan['id']; ?>"><?php echo $karyawan['nama_karyawan']; ?></option>
+                      <?php endforeach; ?>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -306,7 +224,7 @@ function populateObatOptions(selectElement) {
   selectElement.appendChild(defaultOption);
 
   // Tambahkan opsi pilihan obat dari daftar obat
-  obatList.forEach(function(obat) {
+  obatList.forEach(function (obat) {
     var option = document.createElement('option');
     option.value = obat.id;
     option.text = obat.nama_obat;
@@ -315,7 +233,7 @@ function populateObatOptions(selectElement) {
 }
 
 // Panggil fungsi populateObatOptions() saat halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   var select = document.querySelector('[name="obat[0][id]"]');
   populateObatOptions(select);
 });
@@ -329,22 +247,22 @@ function tambahObat() {
   var newObatForm = lastObatForm.cloneNode(true);
 
   var inputs = newObatForm.getElementsByTagName('input');
-  for (var i = 0; i < inputs.length; i++) {   
+  for (var i = 0; i < inputs.length; i++) {
     inputs[i].name = 'obat[' + index + '][' + inputs[i].id + ']';
   }
 
   var selects = newObatForm.getElementsByTagName('select');
- for (var i = 0; i < selects.length; i++) {
-  selects[i].name = 'obat[' + index + '][' + selects[i].id + ']';
-  selects[i].setAttribute('data-satuan', 'obat[' + index + '][satuan]');
- }
-
-
+  for (var i = 0; i < selects.length; i++) {
+    selects[i].name = 'obat[' + index + '][' + selects[i].id + ']';
+    selects[i].setAttribute('data-satuan', 'obat[' + index + '][satuan]');
+    selects[i].onchange = function () {
+      setBatchId(this);
+    };
+  }
 
   var menuObat = document.getElementById('menu-obat');
   menuObat.appendChild(newObatForm);
 }
-
 
 // Fungsi untuk menghapus formulir obat
 function hapusObat(button) {
@@ -362,7 +280,46 @@ function setObatId(select) {
   var obatId = select.value;
   var inputId = select.closest('.obat-form').querySelector('.obat-id');
   inputId.value = obatId;
+
+  // Panggil fungsi untuk mengupdate opsi nomor batch
+  setBatchId(select);
 }
+
+function setBatchId(select) {
+  var obatId = select.value;
+  var noBatchSelect = select.closest('.obat-form').querySelector('.no-batch');
+
+  // Buat objek XMLHttpRequest
+  var xhr = new XMLHttpRequest();
+  
+  // Atur callback fungsi untuk menangani kejadian onreadystatechange
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      // Parsing data JSON yang diterima
+      console.log(xhr.responseText);
+      var batchList = JSON.parse(xhr.responseText);
+      
+      // Hapus semua opsi nomor batch yang ada sebelumnya
+      noBatchSelect.innerHTML = '';
+      
+      // Tambahkan opsi nomor batch yang sesuai dengan obat yang dipilih
+      batchList.forEach(function (batch) {
+        var option = document.createElement('option');
+        option.value = batch.id;
+        option.text = batch.no_batch;
+        noBatchSelect.appendChild(option);
+      });
+    }
+  };
+  
+  // Kirim permintaan dengan metode GET ke getBatchDataUrl dengan parameter obat_id
+  xhr.open('GET', '<?php echo $getBatchDataUrl; ?>?obat_id=' + obatId, true);
+  
+  // Kirim permintaan
+  xhr.send();
+}
+
+
 
 // Fungsi untuk mengatur nilai id obat yang dipilih
 function setSatuanId(select) {
@@ -371,5 +328,49 @@ function setSatuanId(select) {
   inputId.value = satuanId;
 }
 
+      function hitung() {
+        // Mendapatkan input dari elemen input
+        var qty_tablet = parseFloat(document.getElementById("qty_tablet").value);
+        var harga = parseFloat(document.getElementById("harga").value);
+        var total_harga = parseFloat(document.getElementById("total_harga").value);
+        var total_bayar = parseFloat(document.getElementById("total_bayar").value);
+
+        // Menghitung perkalian dan pengurangan
+        var total_harga = qty_tablet * harga;
+        var kembali = total_bayar - total_harga;
+
+        // Menampilkan hasil perkalian dan pengurangan pada elemen input readonly
+        document.getElementById("total_harga").value = total_harga;
+        document.getElementById("kembali").value = kembali;
+      }
+
+      // Memanggil fungsi hitung() setiap kali nilai input berubah
+      document.addEventListener("input", hitung);
+
 
 </script>
+
+<?php
+// Fungsi untuk mengenerate nomor struk
+function generateNoStruk($conn) {
+  // Ambil informasi tanggal saat ini
+  $tanggal = date('Ymd');
+
+  // Query untuk mendapatkan jumlah penjualan pada tanggal ini
+  $query = "SELECT COUNT(*) as count FROM tb_penjualan WHERE DATE(tgl_penjualan) = CURDATE()";
+  $result = mysqli_query($conn, $query);
+
+  if ($result) {
+    $row = mysqli_fetch_assoc($result);
+    $count = $row['count'];
+
+    // Format nomor struk dengan menambahkan angka running
+    $no_struk = $tanggal . str_pad(($count + 1), 4, '0', STR_PAD_LEFT);
+
+    return $no_struk;
+  } else {
+    // Jika terjadi kesalahan dalam query, kembalikan nomor struk default
+    return '000000';
+  }
+}
+?>

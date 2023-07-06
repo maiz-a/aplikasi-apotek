@@ -164,15 +164,6 @@ $satuan_json = json_encode($tb_satuan);
                         </div>
                       </div>
 
-                      <div class="form-group row">
-                        <div class="col-md-4">
-                          <label>Bayar</label>
-                        </div>
-                        <div class="col-md-6">
-                          <input type="text" class="form-control" name="obat[0][bayar]" id="bayar" required>
-                        </div>
-                      </div>
-
                     </div>
                   </div>
 
@@ -185,6 +176,28 @@ $satuan_json = json_encode($tb_satuan);
                       </div>
                       <div class="col-md-8">
                         <input type="text" class="form-control" name="total_harga" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label>PPN</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" class="form-control" name="ppn" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label>Total Tagihan</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" class="form-control" name="total_tagihan" required>
                       </div>
                     </div>
                   </div>

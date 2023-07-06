@@ -47,7 +47,7 @@ $no = 1;
                       <td><?= $penjualan['kembali']; ?></td>
                       <td><?= $penjualan['nama_karyawan']; ?></td>
                       <td>
-                        <a href="?page=edit-penjualan&id=<?= $penjualan['id']; ?>"><i class="m-1 feather icon-edit-2"></i></a>
+                        <!-- <a href="?page=edit-penjualan&id=<?= $penjualan['id']; ?>"><i class="m-1 feather icon-edit-2"></i></a> -->
                         <a href="?page=hapus-penjualan&id=<?= $penjualan['id']; ?>" class="btn-hapus"><i class="feather icon-trash"></i></a>
                         <a href="?page=detail-penjualan&id=<?= $penjualan['id']; ?>" class="btn-detail"><i class="feather icon-info"></i></a>
                       </td>

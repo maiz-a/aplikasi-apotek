@@ -131,7 +131,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                           <label>Harga</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="text" class="form-control" name="obat[0][harga]" id="harga" required>
+                          <input type="number" class="form-control" name="obat[0][harga]" id="harga" required>
                         </div>
                       </div>
 
@@ -145,7 +145,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                         <label>Total Harga</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_harga" required>
+                        <input type="number" class="form-control" name="total_harga" id="total_harga"  readonly >
                       </div>
                     </div>
                   </div>
@@ -156,7 +156,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                         <label>Total Bayar</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_bayar" required>
+                        <input type="number" class="form-control" name="total_bayar" id="total_bayar"  required>
                       </div>
                     </div>
                   </div>
@@ -167,7 +167,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                         <label>Sisa Kembalian</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" class="form-control" name="kembali" required>
+                        <input type="number" class="form-control" name="kembali" id="kembali" readonly >
                       </div>
                     </div>
                   </div>
@@ -200,6 +200,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
   </div>
   </div>
 </section>
+
 
 <script>
 // Inisialisasi counter
@@ -328,6 +329,35 @@ function setSatuanId(select) {
   inputId.value = satuanId;
 }
 
+</script>
+
+<script>
+  var total_harga = 0;
+      function hitung() {
+        var index = counter - 1;
+        console.log(total_harga);
+        var element = document.getElementsByName('obat[' + index + '][qty_tablet]')[0];
+        // Mendapatkan input dari elemen input
+        console.log(document.getElementsByName('obat[' + index + '][qty_tablet]')[0].value);
+        
+        var qty = parseInt(document.getElementsByName('obat[' + index + '][qty_tablet]')[0].value);
+        console.log(qty);
+        var harga = parseInt(document.getElementsByName('obat[' + index + '][harga]')[0].value);
+        //var total_harga = parseFloat(document.getElementById("total_harga").value);
+        var total_bayar = parseFloat(document.getElementById("total_bayar").value);
+
+        // Menghitung perkalian dan pengurangan
+        total_harga = total_harga + (qty * harga);
+
+        var kembali = total_bayar - total_harga;
+
+        // Menampilkan hasil perkalian dan pengurangan pada elemen input readonly
+        document.getElementById("total_harga").value = total_harga;
+        document.getElementById("kembali").value = kembali;
+      }
+
+      // Memanggil fungsi hitung() setiap kali nilai input berubah
+      element.addEventListener("change", hitung);
 </script>
 
 <?php
