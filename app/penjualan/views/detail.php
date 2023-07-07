@@ -52,7 +52,7 @@ $no = 1;
               ?>
                 <tr>
                   <td><?= $no++ ?></td>
-                  <td><?= $dpj['nama_obat'] ??'' ; ?></td>
+                  <td><?= $dpj['nama_obat']; ?></td>
                   <td><?= $dpj['no_batch']; ?></td>
                   <td><?= $dpj['jumlah']; ?></td>
                   <td><?= $dpj['harga']; ?></td>

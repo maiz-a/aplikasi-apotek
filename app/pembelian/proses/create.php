@@ -11,13 +11,13 @@ $total_bayar = $_POST['total_bayar'];
 $sisa_bayar = $_POST['sisa_bayar'];
 $status = $_POST['status'];
 $distributor = $_POST['distributor'];
-$karyawan = $_POST['karyawan'];
+$user = $_POST['user'];
 
 // Query untuk insert data pembelian
 $query_pembelian = "INSERT INTO tb_pembelian (no_faktur, tgl_pembelian, tgl_jatuh_tempo, total_harga,
-                      total_bayar, sisa_bayar, status, distributor_id, karyawan_id)
+                      total_bayar, sisa_bayar, status, distributor_id, user_id)
                     VALUES ('$no_faktur', '$tgl_pembelian', '$tgl_jatuh_tempo', '$total_harga', '$total_bayar', 
-                    '$sisa_bayar', '$status', '$distributor', '$karyawan')";
+                    '$sisa_bayar', '$status', '$distributor', '$user')";
 
 // Eksekusi query pembelian
 $result_pembelian = mysqli_query($conn, $query_pembelian);

@@ -1,3 +1,4 @@
+
 <?php
 require_once 'app/functions/MY_model.php';
 
@@ -39,7 +40,6 @@ $obat = get_where("SELECT o.*, s.nama_distributor, k.nama_kategori, st.nama_satu
                   </div>
                 </div>
                 </div>
-
 
                 <div class="col-12">
                     <div class="form-group row">
@@ -126,6 +126,17 @@ $obat = get_where("SELECT o.*, s.nama_distributor, k.nama_kategori, st.nama_satu
               </div>
             </div>
             </div>
+
+            <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label>Tablet/Box</label> 
+                      </div>
+                      <div class="col-md-8">
+                        <input type="number" placeholder="Masukan Tablet/Box" class="form-control" name="tablet_per_box" value="<?= $obat['tablet_per_box']; ?>">
+                      </div>
+                    </div>
+                  </div>
 
             <div class="col-12">
                     <div class="form-group row">

@@ -46,10 +46,17 @@
         </ul>
 
         <li class="nav-item"><a href="javascript:;"><i class="feather icon-pie-chart"></i><span class="menu-title"></span>Laporan</a>
+        <?php 
+                        if (isset($_SESSION['user'])) {
+                          $userRole = $_SESSION['user']['hak_akses'];
+                          if ($userRole === 'pemilik') : 
+                      ?>
+        
         <ul class="menu-content">
           <li class="<?php echo is_active('lap-penjualan'); ?>"><a href="?page=laporan-penjualan"><i class="feather icon-circle"></i><span class="menu-item">Laporan Penjualan</span></a>
           </li>
         </ul>
+        <?php endif; } ?>
 
         <ul class="menu-content">
           <li class="<?php echo is_active('expired'); ?>"><a href="?page=data-expired"><i class="feather icon-circle"></i><span class="menu-item">Laporan Expired</span></a>

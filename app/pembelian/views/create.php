@@ -1,10 +1,10 @@
 <?php
 require_once 'app/functions/MY_model.php';
-$tb_pembelian = get("SELECT pb.*, d.nama_distributor, k.nama_karyawan
+$tb_pembelian = get("SELECT pb.*, d.nama_distributor, u.nama_user
             FROM tb_pembelian pb
             INNER JOIN tb_det_pembelian dpb ON pb.id = dpb.pembelian_id
             INNER JOIN tb_distributor d ON pb.distributor_id = d.id 
-            INNER JOIN tb_karyawan k ON pb.karyawan_id = k.id
+            INNER JOIN tb_user u  ON pb.user_id = u.id
             ");
 
 // Ambil daftar obat dari database
@@ -15,8 +15,8 @@ $obat_json = json_encode($tb_obat);
 // Ambil daftar distributor dari database
 $tb_distributor = get("SELECT * FROM tb_distributor");
 
-// Ambil daftar karyawan dari database
-$tb_karyawan = get("SELECT * FROM tb_karyawan");
+// Ambil daftar user dari database
+$tb_user = get("SELECT * FROM tb_user");
 
 // Ambil daftar satuan dari database
 $tb_satuan = get("SELECT * FROM tb_satuan");
@@ -268,9 +268,9 @@ $satuan_json = json_encode($tb_satuan);
                     <label>Karyawan</label>
                   </div>
                   <div class="col-md-8">
-                    <select class="form-control" name="karyawan" required>
-                      <?php foreach ($tb_karyawan as $karyawan) : ?>
-                        <option value="<?php echo $karyawan['id']; ?>"><?php echo $karyawan['nama_karyawan']; ?></option>
+                    <select class="form-control" name="user" required>
+                      <?php foreach ($tb_user as $user) : ?>
+                        <option value="<?php echo $user['id']; ?>"><?php echo $user['nama_user']; ?></option>
                       <?php endforeach; ?>
                     </select>
                   </div>

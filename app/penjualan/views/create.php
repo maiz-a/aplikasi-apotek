@@ -1,17 +1,17 @@
 <?php
 require_once 'app/functions/MY_model.php';
-$tb_penjualan = get("SELECT pj.*, k.nama_karyawan
+$tb_penjualan = get("SELECT pj.*, u.nama_user
             FROM tb_penjualan pj
             INNER JOIN tb_det_penjualan dpj ON pj.id = dpj.penjualan_id
-            INNER JOIN tb_karyawan k ON pj.karyawan_id = k.id
+            INNER JOIN tb_user u ON pj.user_id = u.id
             ");
 
 // Ambil daftar obat dari database
 $tb_obat = get("SELECT * FROM tb_obat");
 $obat_json = json_encode($tb_obat);
 
-// Ambil daftar karyawan dari database
-$tb_karyawan = get("SELECT * FROM tb_karyawan");
+// Ambil daftar user dari database
+$tb_user = get("SELECT * FROM tb_user");
 
 // Ambil daftar no_batch dari database
 $tb_batch = get("SELECT * FROM tb_batch");
@@ -175,12 +175,12 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
               <div class="col-12">
                 <div class="form-group row">
                   <div class="col-md-4">
-                    <label>Karyawan</label>
+                    <label>User</label>
                   </div>
                   <div class="col-md-8">
-                    <select class="form-control" name="karyawan" required>
-                      <?php foreach ($tb_karyawan as $karyawan) : ?>
-                        <option value="<?php echo $karyawan['id']; ?>"><?php echo $karyawan['nama_karyawan']; ?></option>
+                    <select class="form-control" name="user" required>
+                      <?php foreach ($tb_user as $user) : ?>
+                        <option value="<?php echo $user['id']; ?>"><?php echo $user['nama_user']; ?></option>
                       <?php endforeach; ?>
                     </select>
                   </div>

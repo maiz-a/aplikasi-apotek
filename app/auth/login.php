@@ -9,11 +9,23 @@ if (isset($_SESSION['user'])) {
   exit;
 }
 
+// Periksa jika pengguna sudah login dan memiliki hak akses yang sesuai
+if (isset($_SESSION['user'])) {
+  $userRole = $_SESSION['user']['hak_akses'];
+  if ($userRole === 'pemilik') {
+    echo '<script>document.location.href="' . $url . '"</script>';
+    exit;
+  } elseif ($userRole === 'karyawan') {
+    echo '<script>document.location.href="' . $url . '"</script>';
+    exit;
+  }
+}
+
 if (isset($_POST['login'])) {
   $username = $_POST['username'];
   $password = $_POST['password'];
 
-  $query = mysqli_query($conn, "SELECT * FROM tb_karyawan WHERE username = '$username' ");
+  $query = mysqli_query($conn, "SELECT * FROM tb_user WHERE username = '$username' ");
 
   if (mysqli_num_rows($query) === 1) {
     $row = mysqli_fetch_assoc($query);

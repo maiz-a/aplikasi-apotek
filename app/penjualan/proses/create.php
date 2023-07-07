@@ -11,13 +11,13 @@ $tgl_penjualan = $_POST['tgl_penjualan'];
 $total_harga = $_POST['total_harga'];
 $total_bayar = $_POST['total_bayar'];
 $kembali = $_POST['kembali'];
-$karyawan = $_POST['karyawan'];
+$user = $_POST['user'];
 
 // Query untuk insert data penjualan
 $query_penjualan = "INSERT INTO tb_penjualan (no_struk, tgl_penjualan, total_harga,
-                      total_bayar, kembali, karyawan_id)
+                      total_bayar, kembali, user_id)
                     VALUES ('$no_struk', '$tgl_penjualan', '$total_harga', '$total_bayar', 
-                    '$kembali', '$karyawan')";
+                    '$kembali', '$user')";
 
 // Eksekusi query penjualan
 $result_penjualan = mysqli_query($conn, $query_penjualan);

@@ -4,11 +4,11 @@ require_once '../../functions/MY_model.php';
 
 $id = $_POST['id'];
 $kode_obat = $_POST['kode_obat']; 
-$merk_obat = $_POST['merk_obat']; 
 $nama_obat = $_POST['nama_obat'];
 $nama_distributor = $_POST['distributor']; 
 $nama_kategori = $_POST['kategori']; 
 $nama_satuan = $_POST['satuan']; 
+$tablet_per_box = $_POST['tablet_per_box']; 
 $harga_beli = $_POST['harga_beli'];
 $harga_jual = $_POST['harga_jual'];
 
@@ -24,8 +24,8 @@ $kategori_id = $kategori['id'];
 $satuan = get_where("SELECT id FROM tb_satuan WHERE id = '$nama_satuan'");
 $satuan_id = $satuan['id'];
 
-$query = "UPDATE tb_obat SET kode_obat = '$kode_obat', merk_obat = '$merk_obat', nama_obat = '$nama_obat', distributor_id = '$distributor_id', 
-          kategori_id = '$kategori_id',  satuan_id = '$satuan_id', harga_beli = '$harga_beli', harga_jual = '$harga_jual'  
+$query = "UPDATE tb_obat SET kode_obat = '$kode_obat', nama_obat = '$nama_obat', distributor_id = '$distributor_id', 
+          kategori_id = '$kategori_id',  satuan_id = '$satuan_id', tablet_per_box = '$tablet_per_box', harga_beli = '$harga_beli', harga_jual = '$harga_jual'  
           WHERE id = '$id'";
 
 if (update($query) === 1) {

@@ -3,10 +3,10 @@ require_once 'app/functions/MY_model.php';
 
 
 
-$tb_pembelian = get("SELECT pb.*, d.nama_distributor , k.nama_karyawan
+$tb_pembelian = get("SELECT pb.*, d.nama_distributor , u.nama_user
             FROM tb_pembelian pb
             INNER JOIN tb_distributor d ON pb.distributor_id = d.id
-            INNER JOIN tb_karyawan k ON pb.karyawan_id = k.id");
+            INNER JOIN tb_user u ON pb.user_id = u.id");
 
 $no = 1;
 
@@ -39,7 +39,7 @@ $no = 1;
                     <th>Sisa Pembayaran</th>
                     <th>Distributor</th>
                     <th>Karyawan</th>
-                    <th style="text-align : center" width="80px">Aksi</th>
+                    <th style="text-align : center" width="60px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,10 +54,15 @@ $no = 1;
                       <td><?= $pembelian['total_bayar']; ?></td>
                       <td><?= $pembelian['sisa_bayar']; ?></td>
                       <td><?= $pembelian['nama_distributor']; ?></td>
-                      <td><?= $pembelian['nama_karyawan']; ?></td>
+                      <td><?= $pembelian['nama_user']; ?></td>
                       <td>
-                        <a href="?page=edit-pembelian&id=<?= $pembelian['id']; ?>" class="btn-edit"><i class="m-1 feather icon-edit"></i></a>
+                      <?php 
+                        if (isset($_SESSION['user'])) {
+                          $userRole = $_SESSION['user']['hak_akses'];
+                          if ($userRole === 'pemilik') : 
+                      ?>
                         <a href="?page=hapus-pembelian&id=<?= $pembelian['id']; ?>" class="btn-hapus"><i class="m-1 feather icon-trash"></i></a>
+                        <?php endif; } ?>
                         <a href="?page=detail-pembelian&id=<?= $pembelian['id']; ?>" class="btn-detail"><i class="m-1 feather icon-info"></i></a>
                       </td>
                     </tr>
