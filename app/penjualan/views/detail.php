@@ -4,7 +4,7 @@ require_once 'app/functions/MY_model.php';
 // Ambil pembelian_id dari parameter URL
 $id = $_GET["id"];
 
-$query = "SELECT dpj.*, o.nama_obat, b.no_batch
+$query = "SELECT dpj.*, o.nama_obat, b.no_batch, pj.total_harga, pj.total_bayar, pj.kembali
             FROM tb_det_penjualan dpj
             INNER JOIN tb_penjualan pj ON dpj.penjualan_id = pj.id
             INNER JOIN tb_obat o ON dpj.obat_id = o.id
@@ -54,7 +54,7 @@ $no = 1;
                   <td><?= $no++ ?></td>
                   <td><?= $dpj['nama_obat']; ?></td>
                   <td><?= $dpj['no_batch']; ?></td>
-                  <td><?= $dpj['jumlah']; ?></td>
+                  <td><?= $dpj['qty_tablet']; ?></td>
                   <td><?= $dpj['harga']; ?></td>
                   <td><?= $dpj['total_harga']; ?></td>
                   <td><?= $dpj['total_bayar']; ?></td>

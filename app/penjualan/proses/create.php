@@ -4,7 +4,6 @@ session_start();
 require_once '../../functions/MY_model.php';
 
 
-
 // Mendapatkan data penjualan dari form
 $no_struk = $_POST['no_struk'];
 $tgl_penjualan = $_POST['tgl_penjualan'];
@@ -30,7 +29,7 @@ if ($result_penjualan) {
   $obat = $_POST['obat'];
 
   // Loop melalui setiap obat
-  foreach ($obat as $item) {
+  foreach ($_POST['obat'] as $item){
     $obat_id = $item['id'];
     $batch_id = $item['no_batch'];
     $qty_tablet = $item['qty_tablet'];
@@ -63,9 +62,12 @@ if ($result_penjualan) {
         continue;
     }
 
+    // Mendapatkan ID stok terakhir yang di-generate oleh database
+    $stok_id = mysqli_insert_id($conn);
+
     // Query untuk insert detail penjualan
-    $query_det_penjualan = "INSERT INTO tb_det_penjualan (penjualan_id, batch_id, obat_id, qty_tablet, satuan_id, harga)
-    VALUES ('$penjualan_id', '$batch_id', '$obat_id', '$qty_tablet', '$satuan_id', '$harga')";
+    $query_det_penjualan = "INSERT INTO tb_det_penjualan (penjualan_id, batch_id, obat_id, stok_id, qty_tablet, satuan_id, harga)
+    VALUES ('$penjualan_id', '$batch_id', '$obat_id',  '$stok_id', '$qty_tablet', '$satuan_id', '$harga')";
 
     // Eksekusi query detail penjualan
     $result_det_penjualan = mysqli_query($conn, $query_det_penjualan);
@@ -82,8 +84,7 @@ if ($result_penjualan) {
   header('Location: ../../../?page=penjualan');
   exit();
 } else {
-  $_SESSION['message'] = "Gagal menyimpan data pembelian.";
-  header('Location: ../../../?page=penjualan');
-  exit();
+  $_SESSION['message'] = "Gagal menyimpan data penjualan.";
+  $error_message = mysqli_error($conn);
 }
 ?>

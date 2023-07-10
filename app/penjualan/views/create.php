@@ -27,7 +27,8 @@ $no_struk = generateNoStruk($conn);
 // Mendefinisikan alamat URL ke file get_batch_data.php
 $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
 
-
+$total_harga = 0;
+$kembali = 0;
 ?>
 
 <div class="content-header row">
@@ -87,6 +88,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                         </div>
                         <div class="col-md-2">
                           <button type="button" class="btn btn-primary btn-sm" onclick="tambahObat()">Tambah</button>
+                          <script>hitung();</script>
                         </div>
                       </div>
 
@@ -95,7 +97,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                           <label>Nomor Batch</label>
                         </div>
                         <div class="col-md-6">
-                        <select class="form-control no-batch" name="obat[0][no_batch]" onchange="setBatchId(this)" id="no_batch" required>
+                        <select class="form-control no-batch" name="obat[0][no_batch]" onchange="setBatchId(this)" id="no_batch_0" required>
                           <option value="">Pilih Nomor Batch</option>
                         </select>
                         </div>
@@ -109,7 +111,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                           <label>Qty</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="number" class="form-control" name="obat[0][qty_tablet]" id="qty_tablet" required>
+                          <input type="number" class="form-control qty-tablet" name="obat[0][qty_tablet]" id="qty_tablet" required>
                         </div>
                       </div>
 
@@ -131,7 +133,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                           <label>Harga</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="number" class="form-control" name="obat[0][harga]" id="harga" required>
+                          <input type="text" class="form-control harga" name="obat[0][harga]" id="harga" required readonly>
                         </div>
                       </div>
 
@@ -167,7 +169,7 @@ $getBatchDataUrl = 'app/penjualan/views/get_batch_data.php';
                         <label>Sisa Kembalian</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="number" class="form-control" name="kembali" id="kembali" readonly >
+                        <input type="number" class="form-control" name="kembali" id="kembali" >
                       </div>
                     </div>
                   </div>
@@ -208,7 +210,7 @@ var counter = 1;
 
 // Fungsi untuk mengambil data obat dari database
 function getObatList() {
-  return JSON.parse('<?php echo addslashes($obat_json); ?>');
+  return <?php echo $obat_json; ?>;
 }
 
 // Fungsi untuk membuat opsi pilihan obat dalam elemen select
@@ -247,6 +249,8 @@ function tambahObat() {
   var lastObatForm = document.querySelector('.obat-form:last-child');
   var newObatForm = lastObatForm.cloneNode(true);
 
+  newObatForm.dataset.index = index; // Tambahkan atribut data-index
+
   var inputs = newObatForm.getElementsByTagName('input');
   for (var i = 0; i < inputs.length; i++) {
     inputs[i].name = 'obat[' + index + '][' + inputs[i].id + ']';
@@ -258,12 +262,21 @@ function tambahObat() {
     selects[i].setAttribute('data-satuan', 'obat[' + index + '][satuan]');
     selects[i].onchange = function () {
       setBatchId(this);
+      setHargaObat(this);
+      hitung();
     };
+    selects[i].value = ''; // Reset nilai pilihan pada elemen select
   }
+
+  var noBatchSelect = newObatForm.querySelector('.no-batch');
+      noBatchSelect.id = 'no_batch_' + index;
+
 
   var menuObat = document.getElementById('menu-obat');
   menuObat.appendChild(newObatForm);
 }
+
+
 
 // Fungsi untuk menghapus formulir obat
 function hapusObat(button) {
@@ -274,35 +287,39 @@ function hapusObat(button) {
     button.closest('.obat-form').remove();
     counter--;
   }
+  hitung(); // Memanggil fungsi hitung() setelah formulir obat dihapus
+
 }
 
-// Fungsi untuk mengatur nilai id obat yang dipilih
 function setObatId(select) {
   var obatId = select.value;
   var inputId = select.closest('.obat-form').querySelector('.obat-id');
+  var index = select.closest('.obat-form').dataset.index; // Ambil nilai index
   inputId.value = obatId;
 
   // Panggil fungsi untuk mengupdate opsi nomor batch
   setBatchId(select);
+  setHargaObat(select);
 }
+
 
 function setBatchId(select) {
   var obatId = select.value;
   var noBatchSelect = select.closest('.obat-form').querySelector('.no-batch');
+  var index = select.closest('.obat-form').dataset.index; // Ambil nilai index
 
   // Buat objek XMLHttpRequest
   var xhr = new XMLHttpRequest();
-  
+
   // Atur callback fungsi untuk menangani kejadian onreadystatechange
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
       // Parsing data JSON yang diterima
-      console.log(xhr.responseText);
       var batchList = JSON.parse(xhr.responseText);
-      
+
       // Hapus semua opsi nomor batch yang ada sebelumnya
       noBatchSelect.innerHTML = '';
-      
+
       // Tambahkan opsi nomor batch yang sesuai dengan obat yang dipilih
       batchList.forEach(function (batch) {
         var option = document.createElement('option');
@@ -310,55 +327,86 @@ function setBatchId(select) {
         option.text = batch.no_batch;
         noBatchSelect.appendChild(option);
       });
+
+      noBatchSelect.value = ''; // Reset nilai pilihan pada elemen select
     }
   };
-  
+
   // Kirim permintaan dengan metode GET ke getBatchDataUrl dengan parameter obat_id
   xhr.open('GET', '<?php echo $getBatchDataUrl; ?>?obat_id=' + obatId, true);
-  
+
   // Kirim permintaan
   xhr.send();
 }
 
 
 
-// Fungsi untuk mengatur nilai id obat yang dipilih
+
+function setHargaObat(select) {
+  var obatId = select.value;
+  var hargaInput = select.closest('.obat-form').querySelector('.harga');
+
+  var obatList = getObatList();
+  var selectedObat = obatList.find(function (obat) {
+    return obat.id === obatId;
+  });
+
+  if (selectedObat) {
+    hargaInput.value = selectedObat.harga_jual;
+  } else {
+    hargaInput.value = '';
+  }
+}
+
 function setSatuanId(select) {
   var satuanId = select.value;
   var inputId = select.closest('.obat-form').querySelector('.satuan-id');
+  var index = select.closest('.obat-form').dataset.index;
   inputId.value = satuanId;
 }
 
 </script>
 
+
 <script>
+  
   var total_harga = 0;
-      function hitung() {
-        var index = counter - 1;
-        console.log(total_harga);
-        var element = document.getElementsByName('obat[' + index + '][qty_tablet]')[0];
-        // Mendapatkan input dari elemen input
-        console.log(document.getElementsByName('obat[' + index + '][qty_tablet]')[0].value);
-        
-        var qty = parseInt(document.getElementsByName('obat[' + index + '][qty_tablet]')[0].value);
-        console.log(qty);
-        var harga = parseInt(document.getElementsByName('obat[' + index + '][harga]')[0].value);
-        //var total_harga = parseFloat(document.getElementById("total_harga").value);
-        var total_bayar = parseFloat(document.getElementById("total_bayar").value);
+  var kembali = 0;
 
-        // Menghitung perkalian dan pengurangan
-        total_harga = total_harga + (qty * harga);
+  function hitung() {
+    var index = counter - 1;
+    var qty = parseInt(document.getElementsByName('obat[' + index + '][qty_tablet]')[0].value);
+    var harga = parseInt(document.getElementsByName('obat[' + index + '][harga]')[0].value);
+    var total_bayar = parseFloat(document.getElementById("total_bayar").value);
 
-        var kembali = total_bayar - total_harga;
+    total_harga = 0; // Reset nilai total harga sebelum menghitung
 
-        // Menampilkan hasil perkalian dan pengurangan pada elemen input readonly
-        document.getElementById("total_harga").value = total_harga;
-        document.getElementById("kembali").value = kembali;
-      }
+    // Menghitung total harga untuk setiap obat
+    var obatForms = document.getElementsByClassName('obat-form');
+    for (var i = 0; i < obatForms.length; i++) {
+      var qtyObat = parseInt(document.getElementsByName('obat[' + i + '][qty_tablet]')[0].value);
+      var hargaObat = parseInt(document.getElementsByName('obat[' + i + '][harga]')[0].value);
+      total_harga += qtyObat * hargaObat;
+    }
 
-      // Memanggil fungsi hitung() setiap kali nilai input berubah
-      element.addEventListener("change", hitung);
+    var total_bayar = parseFloat(document.getElementById("total_bayar").value);
+    kembali = total_bayar - total_harga;
+    
+
+    // Menampilkan hasil perkalian dan pengurangan pada elemen input readonly
+    document.getElementById("total_harga").value = total_harga;
+    document.getElementById("kembali").value = kembali;
+  }
+
+  // Memanggil fungsi hitung() setiap kali nilai input berubah
+  var obatForms = document.getElementsByClassName('obat-form');
+  for (var i = 0; i < obatForms.length; i++) {
+    var qtyInput = document.getElementsByName('obat[' + i + '][qty_tablet]')[0];
+    qtyInput.addEventListener("change", hitung);
+  }
 </script>
+
+
 
 <?php
 // Fungsi untuk mengenerate nomor struk

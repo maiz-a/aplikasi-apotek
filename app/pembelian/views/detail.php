@@ -46,7 +46,6 @@ $no = 1;
                   <th>Harga</th>
                   <th>Diskon</th>
                   <th>Potongan</th>
-                  <th>Bayar</th>
                 </tr>
               </thead>
               <?php
@@ -55,14 +54,13 @@ $no = 1;
               ?>
                 <tr>
                   <td><?= $no++ ?></td>
-                  <td><?= $dpb['nama_obat'] ?? ''; ?></td>
+                  <td><?= $dpb['nama_obat']; ?></td>
                   <td><?= $dpb['no_batch']; ?></td>
                   <td><?= $dpb['qty']; ?></td>
                   <td><?= $dpb['nama_satuan']; ?></td>
                   <td><?= $dpb['harga']; ?></td>
                   <td><?= $dpb['diskon']; ?></td>
                   <td><?= $dpb['potongan']; ?></td>
-                  <td><?= $dpb['bayar']; ?></td>
                 </tr>
               <?php
               }
