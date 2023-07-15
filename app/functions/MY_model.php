@@ -1,6 +1,6 @@
 <?php
 
-$conn = mysqli_connect('localhost', 'root', '', 'apotek_syifa2');
+$conn = mysqli_connect('localhost', 'root', 'rahasia7', 'apotek_syifa2');
 
 function get($query)
 {
