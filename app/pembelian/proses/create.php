@@ -6,7 +6,6 @@ require_once '../../functions/MY_model.php';
 $no_faktur = $_POST['no_faktur'];
 $tgl_pembelian = $_POST['tgl_pembelian'];
 $tgl_jatuh_tempo = $_POST['tgl_jatuh_tempo'];
-$total_harga = $_POST['total_harga'];
 $total_tagihan = $_POST['total_tagihan'];
 $total_bayar = $_POST['total_bayar'];
 $sisa_bayar = $_POST['sisa_bayar'];
@@ -17,7 +16,7 @@ $user = $_POST['user'];
 // Query untuk insert data pembelian
 $query_pembelian = "INSERT INTO tb_pembelian (no_faktur, tgl_pembelian, tgl_jatuh_tempo, total_harga, total_tagihan,
                       total_bayar, sisa_bayar, status, distributor_id, user_id)
-                    VALUES ('$no_faktur', '$tgl_pembelian', '$tgl_jatuh_tempo', '$total_harga', '$total_tagihan', '$total_bayar', 
+                    VALUES ('$no_faktur', '$tgl_pembelian', '$tgl_jatuh_tempo', '$total_tagihan', '$total_bayar', 
                     '$sisa_bayar', '$status', '$distributor', '$user')";
 
 // Eksekusi query pembelian
@@ -40,6 +39,7 @@ if ($result_pembelian) {
     $harga = $item['harga'];
     $diskon = $item['diskon'];
     $potongan = $item['potongan'];
+    $total_harga = $_POST['total_harga'];
    
 
     // Mengambil tablet_per_box dari tb_obat
@@ -118,8 +118,8 @@ if ($result_pembelian) {
     $stok_id = mysqli_insert_id($conn);
 
     // Query untuk insert detail pembelian
-    $query_det_pembelian = "INSERT INTO tb_det_pembelian (pembelian_id, batch_id, obat_id, stok_id, qty, qty_tablet, satuan_id, harga, diskon, potongan)
-    VALUES ('$pembelian_id', '$batch_id', '$obat_id', '$stok_id','$qty', '$qty_tablet', '$satuan_id', '$harga', '$diskon', '$potongan')";
+    $query_det_pembelian = "INSERT INTO tb_det_pembelian (pembelian_id, batch_id, obat_id, stok_id, qty, qty_tablet, satuan_id, harga, diskon, potongan, total_harga)
+    VALUES ('$pembelian_id', '$batch_id', '$obat_id', '$stok_id','$qty', '$qty_tablet', '$satuan_id', '$harga', '$diskon', '$potongan',  '$total_harga')";
 
     // Eksekusi query detail pembelian
     $result_det_pembelian = mysqli_query($conn, $query_det_pembelian);
