@@ -32,7 +32,7 @@ $satuan_json = json_encode($tb_satuan);
 <section id="basic-horizontal-layouts">
   <div class="row match-height">
     <div class="col-md-12 col-12">
-      <div class="card"> 
+      <div class="card">
         <div class="card-header">
           <h4 class="card-title">Tambah Pembelian</h4>
         </div>
@@ -42,29 +42,29 @@ $satuan_json = json_encode($tb_satuan);
               <div class="form-body">
                 <class="row">
                   <!--faktur pembelian  -->
-                <div class="faktur-pembelian">
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                        <label>No. Faktur</label>
-                      </div>
-                      <div class="col-md-8">
-                        <input type="text" placeholder="No. Faktur" class="form-control" name="no_faktur" required>
-                      </div>
+                  <div class="faktur-pembelian">
+                    <div class="col-12">
+                      <div class="form-group row">
+                        <div class="col-md-4">
+                          <label>No. Faktur</label>
+                        </div>
+                        <div class="col-md-8">
+                          <input type="text" placeholder="No. Faktur" class="form-control" name="no_faktur" required>
+                        </div>
 
-                      <div class="col-md-4">
-                      <label for="ppn_option">PPN:</label>
-                      </div>
-                      <div class="col-md-8">
-                      <input type="radio" id="ppn_termasuk" name="ppn_option" value="ppn_termasuk" class="ppn-option">
-                      <label for="ppn_termasuk">PPN Termasuk</label>
-                      <input type="radio" id="ppn_ditambahkan" name="ppn_option" value="ppn_ditambahkan" class="ppn-option">
-                      <label for="ppn_ditambahkan">PPN Ditambahkan</label>
+                        <div class="col-md-4">
+                          <label for="ppn_option">PPN:</label>
+                        </div>
+                        <div class="col-md-8">
+                          <input type="radio" id="ppn_termasuk" name="ppn_option" value="ppn_termasuk" class="ppn-option" onchange="hitungTotalHarga()" checked>
+                          <label for="ppn_termasuk">PPN Termasuk</label>
+                          <input type="radio" id="ppn_ditambahkan" name="ppn_option" value="ppn_ditambahkan" class="ppn-option" onchange="hitungTotalHarga()">
+                          <label for="ppn_ditambahkan">PPN Ditambahkan</label>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <!-- end faktur pembelian -->
+                  <!-- end faktur pembelian -->
 
                   <div class="col-12">
                     <div class="form-group row">
@@ -96,7 +96,7 @@ $satuan_json = json_encode($tb_satuan);
                           <label>Obat</label>
                         </div>
                         <div class="col-md-6">
-                          <select class="form-control" name="obat[0][id]" onchange="setObatId(this)" id="id" required>
+                          <select class="form-control" name="obat[0][id]" id="id" required>
                             <?php foreach ($tb_obat as $obat) : ?>
                               <option value="<?php echo $obat['id']; ?>"><?php echo $obat['nama_obat']; ?></option>
                             <?php endforeach; ?>
@@ -136,7 +136,7 @@ $satuan_json = json_encode($tb_satuan);
                           <label>Qty</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="number" class="form-control" name="obat[0][qty]" id="qty" required>
+                          <input type="number" class="form-control" onchange="hitungTotalHarga()" name="obat[0][qty]" id="qty" required>
                         </div>
                       </div>
 
@@ -158,7 +158,7 @@ $satuan_json = json_encode($tb_satuan);
                           <label>Harga</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="text" class="form-control" name="obat[0][harga]" id="harga" required>
+                          <input type="text" class="form-control" name="obat[0][harga]" onchange="hitungTotalHarga()" id="harga" required>
                         </div>
                       </div>
 
@@ -167,7 +167,7 @@ $satuan_json = json_encode($tb_satuan);
                           <label>Diskon %</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="number" class="form-control" name="obat[0][diskon]" id="diskon" required>
+                          <input type="number" class="form-control" name="obat[0][diskon]" onchange="hitungPotongan(this)" id="diskon" required>
                         </div>
                       </div>
 
@@ -176,7 +176,7 @@ $satuan_json = json_encode($tb_satuan);
                           <label>Potongan</label>
                         </div>
                         <div class="col-md-6">
-                          <input type="text" class="form-control" name="obat[0][potongan]" id="potongan" required readonly>
+                          <input type="text" class="form-control" name="obat[0][potongan]" id="potongan" onchange="hitungTotalHarga()" required readonly>
                         </div>
                       </div>
 
@@ -199,7 +199,7 @@ $satuan_json = json_encode($tb_satuan);
                         <label>PPN</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" class="form-control" name="ppn" id="ppn" required>
+                        <input type="text" class="form-control" name="ppn" id="ppn">
                       </div>
                     </div>
                   </div>
@@ -243,7 +243,7 @@ $satuan_json = json_encode($tb_satuan);
                         <label>Status</label>
                       </div>
                       <div class="col-md-8">
-                        <select class="form-control" name="status" required>
+                        <select class="form-control" name="status" id="statusSelect" required>
                           <?php
                           // Ambil opsi status dari database
                           $statusOptions = ["LUNAS", "BELUM LUNAS"];
@@ -292,217 +292,222 @@ $satuan_json = json_encode($tb_satuan);
                     <button type="submit" class="btn btn-primary mr-1 mb-1">Submit</button>
                     <button type="reset" class="btn btn-outline-warning mr-1 mb-1">Reset</button>
                   </div>
-                </div>
               </div>
-            </form>
           </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
+  </div>
 </section>
 
 <script>
-// Inisialisasi counter
-var counter = 1;
+  // Inisialisasi counter
+  var counter = 1;
 
-// Fungsi untuk mengambil data obat dari database
-function getObatList() {
-  return JSON.parse('<?php echo addslashes($obat_json); ?>');
-}
+  // Fungsi untuk mengambil data obat dari database
+  function getObatList() {
+    return JSON.parse('<?php echo addslashes($obat_json); ?>');
+  }
 
-// Fungsi untuk membuat opsi pilihan obat dalam elemen select
-function populateObatOptions(selectElement) {
-  var obatList = getObatList();
+  // Fungsi untuk membuat opsi pilihan obat dalam elemen select
+  function populateObatOptions(selectElement) {
+    var obatList = getObatList();
 
-  // Hapus semua opsi pilihan yang ada sebelumnya
-  selectElement.innerHTML = '';
+    // Hapus semua opsi pilihan yang ada sebelumnya
+    selectElement.innerHTML = '';
 
-  // Tambahkan opsi pilihan "Pilih Obat" sebagai opsi default
-  var defaultOption = document.createElement('option');
-  defaultOption.value = '';
-  defaultOption.text = 'Pilih Obat';
-  selectElement.appendChild(defaultOption);
+    // Tambahkan opsi pilihan "Pilih Obat" sebagai opsi default
+    var defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'Pilih Obat';
+    selectElement.appendChild(defaultOption);
 
-  // Tambahkan opsi pilihan obat dari daftar obat
-  obatList.forEach(function(obat) {
-    var option = document.createElement('option');
-    option.value = obat.id;
-    option.text = obat.nama_obat;
-    selectElement.appendChild(option);
+    // Tambahkan opsi pilihan obat dari daftar obat
+    obatList.forEach(function(obat) {
+      var option = document.createElement('option');
+      option.value = obat.id;
+      option.text = obat.nama_obat;
+      selectElement.appendChild(option);
+    });
+  }
+
+  // Panggil fungsi populateObatOptions() saat halaman dimuat
+  document.addEventListener('DOMContentLoaded', function() {
+    var select = document.querySelector('[name="obat[0][id]"]');
+    populateObatOptions(select);
   });
-}
 
-// Panggil fungsi populateObatOptions() saat halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
-  var select = document.querySelector('[name="obat[0][id]"]');
-  populateObatOptions(select);
-});
+  // Fungsi untuk menambahkan formulir obat baru
+  function tambahObat() {
+    counter++;
+    var index = counter - 1;
 
-// Fungsi untuk menambahkan formulir obat baru
-function tambahObat() {
-  counter++;
-  var index = counter - 1;
+    var lastObatForm = document.querySelector('.obat-form:last-child');
+    var newObatForm = lastObatForm.cloneNode(true);
 
-  var lastObatForm = document.querySelector('.obat-form:last-child');
-  var newObatForm = lastObatForm.cloneNode(true);
+    newObatForm.dataset.index = index; // Tambahkan atribut data-index
 
-  var inputs = newObatForm.getElementsByTagName('input');
-  for (var i = 0; i < inputs.length; i++) {
-    inputs[i].name = 'obat[' + index + '][' + inputs[i].id + ']';
-  }
-
-  var selects = newObatForm.getElementsByTagName('select');
-  for (var i = 0; i < selects.length; i++) {
-    selects[i].name = 'obat[' + index + '][' + selects[i].id + ']';
-    selects[i].setAttribute('data-satuan', 'obat[' + index + '][satuan]');
-  }
-
-  // Hapus nilai input di formulir obat baru
-  var qtyInput = newObatForm.querySelector('[name="obat[' + index + '][qty]"]');
-  qtyInput.value = '';
-
-  // Tambahkan formulir obat baru ke dalam menu obat
-  var menuObat = document.getElementById('menu-obat');
-  menuObat.appendChild(newObatForm);
-
-  // Perbarui opsi pilihan obat dalam formulir obat baru
-  var selectElement = newObatForm.querySelector('[name="obat[' + index + '][id]"]');
-  populateObatOptions(selectElement);
-}
-
-// Fungsi untuk menghapus formulir obat
-function hapusObat(button) {
-  var menuObat = button.closest('.col-12');
-  var obatForms = menuObat.getElementsByClassName('obat-form');
-
-  if (obatForms.length > 1) {
-    button.closest('.obat-form').remove();
-    counter--;
-    hitungTotalHarga();
-  }
-}
-
-// Fungsi untuk mengatur nilai id obat yang dipilih
-function setObatId(select) {
-  var obatId = select.value;
-  var inputId = select.closest('.obat-form').querySelector('.obat-id');
-  inputId.value = obatId;
-}
-
-// Fungsi untuk mengatur nilai satuan id obat yang dipilih
-function setSatuanId(select) {
-  var satuanId = select.value;
-  var inputId = select.closest('.obat-form').querySelector('.satuan-id');
-  var index = select.closest('.obat-form').dataset.index;
-  inputId.value = satuanId;
-}
-
-// Fungsi untuk menghitung total harga
-function hitungTotalHarga() {
-  var total_harga = 0;
-  var total_ppn = 0;
-
-  // Menghitung total harga dan potongan untuk setiap obat
-  var obatForms = document.getElementsByClassName('obat-form');
-  for (var i = 0; i < obatForms.length; i++) {
-    var qtyObat = parseInt(obatForms[i].querySelector('[name="obat[' + i + '][qty]"]').value);
-    var hargaObat = parseInt(obatForms[i].querySelector('[name="obat[' + i + '][harga]"]').value);
-    var diskonObat = parseInt(obatForms[i].querySelector('[name="obat[' + i + '][diskon]"]').value);
-    var ppnOption = document.querySelector('.faktur-pembelian [name="ppn_option"]:checked').value;
-
-    var potongan = (qtyObat * hargaObat * diskonObat) / 100;
-    var totalHargaObat = qtyObat * hargaObat - potongan;
-
-    // Menampilkan potongan harga pada input potongan
-    var potonganInput = obatForms[i].querySelector('[name="obat[' + i + '][potongan]"]');
-    potonganInput.value = potongan;
-
-    // Menampilkan hasil perhitungan pada input total harga untuk setiap formulir obat
-    var totalHargaInput = obatForms[i].querySelector('[name="obat[' + i + '][total_harga]"]');
-    totalHargaInput.value = totalHargaObat;
-
-    // Menghitung total harga dan total potongan
-    total_harga += totalHargaObat;
-
-    // Menghitung total PPN berdasarkan opsi PPN yang dipilih
-    var ppnOptionInput = document.querySelector('.faktur-pembelian [name="ppn_option"]:checked');
-    var total_ppn = 0;
-
-    if (ppnOptionInput.value === 'ppn_termasuk') {
-      var total_harga = parseFloat(document.getElementById('total_harga').value);
-      total_ppn = total_harga * 0.11; // PPN 11%
-    } else if (ppnOptionInput.value === 'ppn_ditambahkan') {
-      var obatForms = document.getElementsByClassName('obat-form');
-      for (var i = 0; i < obatForms.length; i++) {
-        var ppnInput = obatForms[i].querySelector('.ppn');
-        var ppnValue = parseFloat(ppnInput.value) || 0;
-        total_ppn += ppnValue;
-      }
+    var inputs = newObatForm.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].name = 'obat[' + index + '][' + inputs[i].id + ']';
+      inputs[i].value = ''; // Reset nilai pilihan pada elemen input
     }
 
-  var total_tagihan = total_harga + total_ppn;
+    var selects = newObatForm.getElementsByTagName('select');
+    for (var i = 0; i < selects.length; i++) {
+      selects[i].name = 'obat[' + index + '][' + selects[i].id + ']';
+      selects[i].setAttribute('data-satuan', 'obat[' + index + '][satuan]');
+      selects[i].value = ''; // Reset nilai pilihan pada elemen select
+    }
 
-  // Menampilkan hasil perhitungan pada input total harga
-  document.getElementById('total_harga').value = total_harga;
+    // Tambahkan formulir obat baru ke dalam menu obat
+    var menuObat = document.getElementById('menu-obat');
+    menuObat.appendChild(newObatForm);
 
-  // Menampilkan hasil perhitungan pada input total PPN
-  document.getElementById('total_ppn').value = total_ppn;
 
-  // Menampilkan hasil perhitungan pada input total tagihan
-  document.getElementById('total_tagihan').value = total_tagihan;
-
-  // Memanggil fungsi hitungkembalian() untuk mengupdate nilai kembalian
-  hitungkembalian();
-}
-}
-
-// Memanggil fungsi hitungTotalHarga() setiap kali nilai input berubah
-var obatForms = document.getElementsByClassName('obat-form');
-for (var i = 0; i < obatForms.length; i++) {
-  var inputs = obatForms[i].getElementsByTagName('input');
-  for (var j = 0; j < inputs.length; j++) {
-    inputs[j].addEventListener('change', hitungTotalHarga);
-  }
-}
-
-// Fungsi untuk menghitung kembalian
-function hitungkembalian() {
-  var total_bayar = parseFloat(document.getElementById('total_bayar').value);
-  var total_tagihan = parseFloat(document.getElementById('total_tagihan').value);
-  var sisa_bayar = total_tagihan - total_bayar;
-
-  // Menampilkan hasil perhitungan pada input sisa pembayaran
-  document.getElementById('sisa_bayar').value = sisa_bayar;
-
-  // Set kembali dalam format mata uang Rupiah
-  var rupiah = document.getElementById('sisa_bayar');
-  rupiah.value = formatRupiah(sisa_bayar.toString(), 'Rp. ');
-}
-
-// Memanggil fungsi hitungkembalian() setelah halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
-  hitungkembalian();
-});
-
-// Fungsi untuk mengubah format angka menjadi format mata uang Rupiah
-function formatRupiah(angka, prefix) {
-  var number_string = angka.replace(/[^,\d]/g, '').toString();
-  var split = number_string.split(',');
-  var sisa = split[0].length % 3;
-  var rupiah = split[0].substr(0, sisa);
-  var ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-  // Tambahkan titik jika yang diinput sudah menjadi angka ribuan
-  if (ribuan) {
-    separator = sisa ? '.' : '';
-    rupiah += separator + ribuan.join('.');
   }
 
-  rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
-  return prefix === undefined ? rupiah : rupiah ? 'Rp.' + rupiah : '';
-}
+  // Fungsi untuk menghapus formulir obat
+  function hapusObat(button) {
+    var menuObat = button.closest('.col-12');
+    var obatForms = menuObat.getElementsByClassName('obat-form');
+
+    if (obatForms.length > 1) {
+      button.closest('.obat-form').remove();
+      counter--;
+      hitungTotalHarga();
+    }
+  }
+
+  function hitungPotongan(input) {
+    var index = counter - 1;
+    var qtyObat = parseInt(input.closest('.obat-form').querySelector('[name="obat[' + index + '][qty]"]').value);
+    var hargaObat = parseInt(input.closest('.obat-form').querySelector('[name="obat[' + index + '][harga]"]').value);
+    var diskonObat = parseInt(input.closest('.obat-form').querySelector('[name="obat[' + index + '][diskon]"]').value);
+    var potongan = (qtyObat * hargaObat * diskonObat) / 100;
+    var potonganInput = input.closest('.obat-form').querySelector('[name="obat[' + index + '][potongan]"]');
+    potonganInput.value = potongan;
+    hitungTotalHarga();
+  }
+
+  // Fungsi untuk menghitung total harga
+  function hitungTotalHarga() {
+    var total_harga = 0;
+    var total_ppn = 0;
+    var ppn_rate = 11; //11%
+
+    // Menghitung total harga dan potongan untuk setiap obat
+    var obatForms = document.getElementsByClassName('obat-form');
+
+    //dapatkan nilai ppn_option yang terpilih dari input radio (ppn_termasuk atau ppn_ditambahkan)
+    var ppnOption = document.querySelector('input[name="ppn_option"]:checked').value;
+
+    for (var i = 0; i < obatForms.length; i++) {
+      var qtyObat = parseInt(obatForms[i].querySelector('[name="obat[' + i + '][qty]"]').value);
+      var hargaObat = parseInt(obatForms[i].querySelector('[name="obat[' + i + '][harga]"]').value);
+      var diskonObat = parseInt(obatForms[i].querySelector('[name="obat[' + i + '][diskon]"]').value);
 
 
+      var potongan = (qtyObat * hargaObat * diskonObat) / 100;
+      var totalHargaObat = qtyObat * hargaObat - potongan;
 
+      // Menampilkan potongan harga pada input potongan
+      var potonganInput = obatForms[i].querySelector('[name="obat[' + i + '][potongan]"]');
+      potonganInput.value = potongan;
+
+      // Menampilkan hasil perhitungan pada input total harga untuk setiap formulir obat
+      var totalHargaInput = obatForms[i].querySelector('[name="obat[' + i + '][total_harga]"]');
+      totalHargaInput.value = totalHargaObat;
+
+      // Menghitung total harga dan total potongan
+      total_harga += totalHargaObat;
+
+    }
+    // Menghitung total PPN berdasarkan opsi PPN yang dipilih
+
+    if (ppnOption === 'ppn_termasuk') {
+      total_ppn = total_harga * (ppn_rate / (100 + ppn_rate)); // PPN 11%
+      total_ppn = Math.round(total_ppn * 100) / 100;
+      var total_tagihan = total_harga;
+
+    } else if (ppnOption === 'ppn_ditambahkan') {
+      total_ppn = total_harga * ppn_rate / 100;
+      total_ppn = Math.round(total_ppn * 100) / 100;
+      var total_tagihan = total_harga + total_ppn;
+    }
+
+    // Menampilkan hasil perhitungan pada input total harga
+    //document.getElementById('total_harga').value = total_harga;
+
+    // Menampilkan hasil perhitungan pada input total PPN
+    document.getElementById('ppn').value = total_ppn;
+
+    // Menampilkan hasil perhitungan pada input total tagihan
+    document.getElementById('total_tagihan').value = total_tagihan;
+
+    // Memanggil fungsi hitungkembalian() untuk mengupdate nilai kembalian
+    hitungkembalian();
+  }
+
+  // Memanggil fungsi hitungTotalHarga() setiap kali nilai input berubah
+  // var obatForms = document.getElementsByClassName('obat-form');
+  // for (var i = 0; i < obatForms.length; i++) {
+  //   var inputs = obatForms[i].getElementsByTagName('input');
+  //   for (var j = 0; j < inputs.length; j++) {
+  //     inputs[j].addEventListener('change', hitungTotalHarga);
+  //   }
+  // }
+
+  // Fungsi untuk menghitung kembalian
+  function hitungkembalian() {
+    var total_bayar = parseFloat(document.getElementById('total_bayar').value);
+    var total_tagihan = parseFloat(document.getElementById('total_tagihan').value);
+    console.log(total_tagihan);
+    var sisa_bayar = total_tagihan - total_bayar;
+    console.log(sisa_bayar);
+
+    // Menampilkan hasil perhitungan pada input sisa pembayaran
+    document.getElementById('sisa_bayar').value = sisa_bayar;
+
+    var statusSelect = document.getElementById("statusSelect");
+    if (sisa_bayar <= 0) {
+      statusSelect.value = "LUNAS";
+    } else if (sisa_bayar > 0) {
+      statusSelect.value = "BELUM LUNAS";
+    }
+
+    // Set kembali dalam format mata uang Rupiah
+    //var rupiah = document.getElementById('sisa_bayar');
+    //jika sisa_bayar bernilai negatif maka tambahkan string '-' didepan
+    // if (sisa_bayar < 0) {
+    //   rupiah.value = '(Lebih Bayar) ' + formatRupiah(sisa_bayar.toString(), 'Rp. ');
+    // } else {
+    //   rupiah.value = formatRupiah(sisa_bayar.toString(), 'Rp. ');
+    // }
+  }
+
+  // Memanggil fungsi hitungkembalian() setelah halaman dimuat
+  document.addEventListener('DOMContentLoaded', function() {
+    hitungkembalian();
+  });
+
+  // Fungsi untuk mengubah format angka menjadi format mata uang Rupiah
+  function formatRupiah(angka, prefix) {
+    var number_string = angka.replace(/[^,\d]/g, '').toString();
+    var split = number_string.split(',');
+    var sisa = split[0].length % 3;
+    var rupiah = split[0].substr(0, sisa);
+    var ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    // Tambahkan titik jika yang diinput sudah menjadi angka ribuan
+    if (ribuan) {
+      separator = sisa ? '.' : '';
+      rupiah += separator + ribuan.join('.');
+    }
+
+    rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+    return prefix === undefined ? rupiah : rupiah ? 'Rp.' + rupiah : '';
+  }
 </script>
