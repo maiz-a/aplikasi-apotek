@@ -17,8 +17,6 @@ $stok = get("SELECT b.no_batch, o.nama_obat, k.nama_kategori, s.nama_satuan, st.
     <div class="card-body">
         <div class="table-responsive"><br>
             <h4 style="font-size: 24px; font-weight: bold; text-align: center;"><strong>Laporan Stok</strong></h4>
-            <?php $date = date('d F Y'); ?>
-            <h5 style="font-size: 18px; font-weight: bold; text-align: center;">Periode: <?php echo $date; ?></h5>
             <br>
 
             <table class="table" id="" width="100%" cellspacing="0" style="font-size: 12px">

@@ -104,21 +104,10 @@ $tb_satuan = get("SELECT * FROM tb_satuan");
                   <div class="col-12">
                     <div class="form-group row">
                       <div class="col-md-4">
-                        <label>Tablet/Box</label> 
+                        <label>Qty/Box</label> 
                       </div>
                       <div class="col-md-8">
-                        <input type="number" placeholder="Masukan Tablet/Box" class="form-control" name="tablet_per_box" required>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                        <label>Harga Beli</label>
-                      </div>
-                      <div class="col-md-8">
-                        <input type="text" placeholder="Masukkan Harga Beli" class="form-control" name="harga_beli" required>
+                        <input type="number" placeholder="Masukan Tablet/Box" class="form-control" name="qty_per_box" required>
                       </div>
                     </div>
                   </div>

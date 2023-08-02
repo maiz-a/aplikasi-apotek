@@ -17,6 +17,12 @@ $result = mysqli_query($conn, $query);
 $no = 1;
 ?>
 
+<div class="content-header row">
+  <div class="content-header-right col-md-12">
+    <a href="?page=penjualan" class="btn btn-light float-right mb-2">Kembali</a>
+  </div>
+</div>
+
 <div class="container-fluid">
   <div class="card shadow mb-4">
     <div class="card-body">

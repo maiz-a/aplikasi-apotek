@@ -19,6 +19,12 @@ $result = mysqli_query($conn, $query);
 $no = 1;
 ?>
 
+<div class="content-header row">
+  <div class="content-header-right col-md-12">
+    <a href="?page=pembelian" class="btn btn-light float-right mb-2">Kembali</a>
+  </div>
+</div>
+
 <div class="container-fluid">
   <div class="card shadow mb-4">
     <div class="card-body">
@@ -44,8 +50,9 @@ $no = 1;
                   <th>Qty</th>
                   <th>satuan</th>
                   <th>Harga</th>
-                  <th>Diskon</th>
+                  <th>Diskon %</th>
                   <th>Potongan</th>
+                  <th>Total Harga</th>
                 </tr>
               </thead>
               <?php
@@ -61,6 +68,7 @@ $no = 1;
                   <td><?= $dpb['harga']; ?></td>
                   <td><?= $dpb['diskon']; ?></td>
                   <td><?= $dpb['potongan']; ?></td>
+                  <td><?= $dpb['total_harga']; ?></td>
                 </tr>
               <?php
               }

@@ -22,6 +22,7 @@ if ($result_delete_det_penjualan && $result_delete_stok && $result_delete_penjua
   exit();
 } else {
   // Hapus gagal
+  echo "<script>alert('Data Gagal Dihapus');</script>";
   $error_message = mysqli_error($conn);
 }
 ?>

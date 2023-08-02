@@ -33,7 +33,7 @@ $no = 1;
                     <th>Distributor</th>
                     <th>Kategori</th>
                     <th>Satuan</th>
-                    <th>Tablet/Box</th>
+                    <th>Qty/Box</th>
                     <th>Harga Jual</th>
                     <th style="text-align : center">Aksi</th>
                   </tr>
@@ -47,7 +47,7 @@ $no = 1;
                       <td><?= $obat['nama_distributor']; ?></td>
                       <td><?= $obat['nama_kategori']; ?></td>
                       <td><?= $obat['nama_satuan']; ?></td>
-                      <td><?= $obat['tablet_per_box']; ?></td> 
+                      <td><?= $obat['qty_per_box']; ?></td> 
                       <td><?= $obat['harga_jual']; ?></td>
                       <td>
                         <a href="?page=edit-obat&id=<?= $obat['id']; ?>"><i class="m-1 feather icon-edit-2"></i></a>

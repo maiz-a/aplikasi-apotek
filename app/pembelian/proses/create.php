@@ -10,14 +10,15 @@ $total_tagihan = $_POST['total_tagihan'];
 $total_bayar = $_POST['total_bayar'];
 $sisa_bayar = $_POST['sisa_bayar'];
 $status = $_POST['status'];
+$ppn = $_POST['ppn'];
 $distributor = $_POST['distributor'];
 $user = $_POST['user'];
 
 // Query untuk insert data pembelian
-$query_pembelian = "INSERT INTO tb_pembelian (no_faktur, tgl_pembelian, tgl_jatuh_tempo, total_harga, total_tagihan,
+$query_pembelian = "INSERT INTO tb_pembelian (no_faktur, tgl_pembelian, tgl_jatuh_tempo, ppn, total_tagihan,
                       total_bayar, sisa_bayar, status, distributor_id, user_id)
                     VALUES ('$no_faktur', '$tgl_pembelian', '$tgl_jatuh_tempo', '$total_tagihan', '$total_bayar', 
-                    '$sisa_bayar', '$status', '$distributor', '$user')";
+                    '$sisa_bayar', '$ppn', '$status', '$distributor', '$user')";
 
 // Eksekusi query pembelian
 $result_pembelian = mysqli_query($conn, $query_pembelian);
@@ -26,11 +27,12 @@ if ($result_pembelian) {
   // Mengambil ID pembelian terakhir yang di-generate oleh database
   $pembelian_id = mysqli_insert_id($conn);
 
+  
   // Mendapatkan data obat dari form
   $obat = $_POST['obat'];
 
   // Loop melalui setiap obat
-  foreach ($obat as $item) {
+  foreach ($_POST['obat'] as $item) {
     $obat_id = $item['id'];
     $batch = $item['batch'];
     $exp = $item['exp'];
@@ -39,23 +41,23 @@ if ($result_pembelian) {
     $harga = $item['harga'];
     $diskon = $item['diskon'];
     $potongan = $item['potongan'];
-    $total_harga = $_POST['total_harga'];
-   
+    $total_harga = $item['total_harga'];
 
-    // Mengambil tablet_per_box dari tb_obat
-    $query_tablet_per_box = "SELECT tablet_per_box FROM tb_obat WHERE id = '$obat_id'";
-    $result_tablet_per_box = mysqli_query($conn, $query_tablet_per_box);
-
-    if ($row_tablet_per_box = mysqli_fetch_assoc($result_tablet_per_box)) {
-      $tablet_per_box = $row_tablet_per_box['tablet_per_box'];
-      $qty_tablet = $qty * $tablet_per_box;
-    } else {
-      // Jika gagal mendapatkan tablet_per_box, lanjutkan ke obat berikutnya
-      continue;
-    }
+    
+     // Mengambil qty_per_box dari tb_obat
+     $query_qty_per_box = "SELECT qty_per_box FROM tb_obat WHERE id = '$obat_id'";
+     $result_qty_per_box = mysqli_query($conn, $query_qty_per_box);
+ 
+     if ($row_qty_per_box = mysqli_fetch_assoc($result_qty_per_box)) {
+         $qty_per_box = $row_qty_per_box['qty_per_box'];
+         $qty_tablet = $qty * $qty_per_box;
+     } else {
+         // Jika gagal mendapatkan qty_per_box, lanjutkan ke obat berikutnya
+         continue;
+     }
 
     // Query untuk cek batch yang sudah ada
-    $query_check_batch = "SELECT * FROM tb_batch WHERE no_batch = '$batch' AND obat_id = '$obat_id'";
+    $query_check_batch = "SELECT * FROM tb_batch WHERE no_batch = '$batch'";
     $result_check_batch = mysqli_query($conn, $query_check_batch);
 
     if (mysqli_num_rows($result_check_batch) > 0) {
@@ -70,8 +72,9 @@ if ($result_pembelian) {
 
       if (!$result_insert_batch) {
         // Jika terjadi kesalahan dalam query insert batch, lanjutkan ke obat berikutnya
-        echo mysqli_error($conn);
-        continue;
+        $error_message = mysqli_error($conn);
+      $_SESSION['message'] = "Gagal menyimpan data pembelian.";
+      header('Location: ../../../?page=pembelian');
       }
 
       // Mengambil ID batch terakhir yang di-generate oleh database
@@ -94,8 +97,9 @@ if ($result_pembelian) {
 
       if (!$result_insert_stok) {
         // Jika terjadi kesalahan dalam query insert stok, lanjutkan ke obat berikutnya
-        echo mysqli_error($conn);
-        continue;
+        $error_message = mysqli_error($conn);
+      $_SESSION['message'] = "Gagal menyimpan data pembelian.";
+      header('Location: ../../../?page=pembelian');
       }
     } else {
       // Jika stok belum ada, insert data stok baru
@@ -109,8 +113,9 @@ if ($result_pembelian) {
 
       if (!$result_insert_stok) {
         // Jika terjadi kesalahan dalam query insert stok, lanjutkan ke obat berikutnya
-        echo mysqli_error($conn);
-        continue;
+        $error_message = mysqli_error($conn);
+      $_SESSION['message'] = "Gagal menyimpan data pembelian.";
+      header('Location: ../../../?page=pembelian');
       }
     }
 
@@ -118,26 +123,17 @@ if ($result_pembelian) {
     $stok_id = mysqli_insert_id($conn);
 
     // Query untuk insert detail pembelian
-    $query_det_pembelian = "INSERT INTO tb_det_pembelian (pembelian_id, batch_id, obat_id, stok_id, qty, qty_tablet, satuan_id, harga, diskon, potongan, total_harga)
-    VALUES ('$pembelian_id', '$batch_id', '$obat_id', '$stok_id','$qty', '$qty_tablet', '$satuan_id', '$harga', '$diskon', '$potongan',  '$total_harga')";
-
-    // Eksekusi query detail pembelian
-    $result_det_pembelian = mysqli_query($conn, $query_det_pembelian);
-
-    if (!$result_det_pembelian) {
-      // Jika terjadi kesalahan dalam memasukkan data detail pembelian, hapus data batch yang sudah dimasukkan sebelumnya
-      mysqli_query($conn, "DELETE FROM tb_batch WHERE id = '$batch_id'");
-
-      $_SESSION['error_message'] = "Gagal menyimpan data pembelian.";
-      echo mysqli_error($conn);;
-      exit();
-    }
+    $query = "INSERT INTO tb_det_pembelian (pembelian_id, batch_id, obat_id, stok_id, qty, qty_tablet, satuan_id, harga, diskon, potongan, total_harga)
+    VALUES ('$pembelian_id', '$batch_id', '$obat_id', '$stok_id', '$qty', '$qty_tablet', '$satuan_id', '$harga', '$diskon', '$potongan','$total_harga')";
   }
-
-  $_SESSION['success_message'] = "Data pembelian berhasil disimpan.";
+  
+}
+   
+if (create($query) === 1) {
+  echo "<script>alert('Data Berhasil Disimpan');</script>";
   echo '<script>document.location.href="../../../?page=pembelian";</script>';
 } else {
-  $_SESSION['error_message'] = "Gagal menyimpan data pembelian.";
-   echo mysqli_error($conn);
+  echo "<script>alert('Data Gagal Disimpan');</script>";
+  echo mysqli_error($conn);
 }
 ?>

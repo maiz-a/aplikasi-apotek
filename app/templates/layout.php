@@ -22,7 +22,7 @@ if (!isset($_SESSION['user'])) {
   <meta name="description" content="Vuesax admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
   <meta name="keywords" content="admin template, Vuesax admin template, dashboard template, flat admin template, responsive admin template, web app">
   <meta name="author" content="PIXINVENT">
-  <title><?= (isset($_SESSION['title']) ? $_SESSION['title'] : 'Admin'); ?></title>
+  <title><?= (isset($_SESSION['title']) ? $_SESSION['title'] : 'Apotek Syifa'); ?></title>
 
   <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css">
 

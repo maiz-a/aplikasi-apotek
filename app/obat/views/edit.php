@@ -130,24 +130,13 @@ $obat = get_where("SELECT o.*, s.nama_distributor, k.nama_kategori, st.nama_satu
             <div class="col-12">
                     <div class="form-group row">
                       <div class="col-md-4">
-                        <label>Tablet/Box</label> 
+                        <label>Qty/Box</label> 
                       </div>
                       <div class="col-md-8">
-                        <input type="number" placeholder="Masukan Tablet/Box" class="form-control" name="tablet_per_box" value="<?= $obat['tablet_per_box']; ?>">
+                        <input type="number" placeholder="Masukan Tablet/Box" class="form-control" name="qty_per_box" value="<?= $obat['qty_per_box']; ?>">
                       </div>
                     </div>
                   </div>
-
-            <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                    <label>Harga Beli</label>
-                  </div>
-                  <div class="col-md-8">
-                    <input type="text" placeholder="Harga Beli" class="form-control" name="harga_beli" value="<?= $obat['harga_beli']; ?>">
-                  </div>
-                </div>
-                </div>
 
                 <div class="col-12">
                     <div class="form-group row">

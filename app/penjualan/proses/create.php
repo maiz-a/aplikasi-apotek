@@ -66,25 +66,20 @@ if ($result_penjualan) {
     $stok_id = mysqli_insert_id($conn);
 
     // Query untuk insert detail penjualan
-    $query_det_penjualan = "INSERT INTO tb_det_penjualan (penjualan_id, batch_id, obat_id, stok_id, qty_tablet, satuan_id, harga)
+    $query = "INSERT INTO tb_det_penjualan (penjualan_id, batch_id, obat_id, stok_id, qty_tablet, satuan_id, harga)
     VALUES ('$penjualan_id', '$batch_id', '$obat_id',  '$stok_id', '$qty_tablet', '$satuan_id', '$harga')";
 
-    // Eksekusi query detail penjualan
-    $result_det_penjualan = mysqli_query($conn, $query_det_penjualan);
-
-    if (!$result_det_penjualan) {
-      // Jika terjadi kesalahan dalam query detail penjualan tampilkan pesan gagal
-      $_SESSION['message'] = "Gagal menyimpan data penjualan.";
-      header('Location: ../../../?page=penjualan');
-      exit();
-    }
   }
-
-  $_SESSION['message'] = "Data pembelian berhasil disimpan.";
-  header('Location: ../../../?page=penjualan');
-  exit();
-} else {
-  $_SESSION['message'] = "Gagal menyimpan data penjualan.";
-  $error_message = mysqli_error($conn);
 }
+
+if (create($query) === 1) {
+  echo "<script>alert('Data Berhasil Disimpan');</script>";
+  echo '<script>document.location.href="../../../?page=penjualan";</script>';
+} else {
+  echo "<script>alert('Data Gagal Disimpan');</script>";
+  echo mysqli_error($conn);
+}
+  
+
+ 
 ?>

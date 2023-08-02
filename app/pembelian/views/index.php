@@ -34,6 +34,7 @@ $no = 1;
                     <th>Tanggal Pembelian</th>
                     <th>Tanggal Jatuh Tempo </th>
                     <th>Status</th>
+                    <th>PPN</th>
                     <th>Total Tagihan</th>
                     <th>Bayar</th>
                     <th>Sisa Pembayaran</th>
@@ -50,6 +51,7 @@ $no = 1;
                       <td><?= $pembelian['tgl_pembelian']; ?></td>
                       <td><?= $pembelian['tgl_jatuh_tempo']; ?></td>
                       <td><?= $pembelian['status']; ?></td>
+                      <td><?= $pembelian['ppn']; ?></td>
                       <td><?= $pembelian['total_tagihan']; ?></td>
                       <td><?= $pembelian['total_bayar']; ?></td>
                       <td><?= $pembelian['sisa_bayar']; ?></td>

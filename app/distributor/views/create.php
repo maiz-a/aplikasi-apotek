@@ -31,7 +31,18 @@ $no = 1;
                         <label>Nama Distributor</label>
                       </div>
                       <div class="col-md-8">
-                        <input type="text" placeholder="nama supplier" class="form-control" name="nama_distributor" required>
+                        <input type="text" placeholder="nama distributor" class="form-control" name="nama_distributor" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label>Alamat Distributor</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" placeholder="alamat distributor" class="form-control" name="alamat_distributor" required>
                       </div>
                     </div>
                   </div>
@@ -43,17 +54,6 @@ $no = 1;
                       </div>
                       <div class="col-md-8">
                         <input type="text" placeholder="telepon" class="form-control" name="telepon_distributor" required>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12">
-                    <div class="form-group row">
-                      <div class="col-md-4">
-                        <label>Alamat Distributor</label>
-                      </div>
-                      <div class="col-md-8">
-                        <input type="text" placeholder="alamat supplier" class="form-control" name="alamat_distributor" required>
                       </div>
                     </div>
                   </div>

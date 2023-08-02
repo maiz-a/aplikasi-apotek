@@ -107,9 +107,6 @@ $satuan_json = json_encode($tb_satuan);
                         </div>
                       </div>
 
-                      <!-- Tambahkan input hidden untuk menyimpan nilai id obat -->
-                      <input type="hidden" class="obat-id" name="obat[0][id]" value="">
-
                       <div class="form-group row">
                         <div class="col-md-4">
                           <label>Nomor Batch</label>

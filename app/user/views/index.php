@@ -1,6 +1,6 @@
 <?php
 require_once 'app/functions/MY_model.php';
-$tb_karyawan = get("SELECT k.* FROM tb_karyawan k ");
+$tb_user = get("SELECT u.* FROM tb_user u ");
 
 $no = 1;
 
@@ -12,7 +12,7 @@ $no = 1;
     <div class="col-12">
       <div class="card">
         <div class="card-header">
-          <h4 class="card-title">Data Karyawan</h4>
+          <h4 class="card-title">Data User</h4>
          
         </div>
         <div class="card-content">
@@ -22,16 +22,18 @@ $no = 1;
                 <thead>
                   <tr>
                   <th width="10px">No</th>
-                  <th>Nama Karyawan</th>
+                  <th>Nama Username</th>
                   <th>Username</th>
+                  <th>Hak Akses</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <?php foreach ($tb_karyawan as $user) : ?>
+                  <?php foreach ($tb_user as $user) : ?>
                     <tr>
                       <td><?= $user['id']; ?></td>
-                      <td><?= $user['nama_karyawan']; ?></td>
+                      <td><?= $user['nama_user']; ?></td>
                       <td><?= $user['username']; ?></td>
+                      <td><?= $user['hak_akses']; ?></td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>

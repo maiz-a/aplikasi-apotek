@@ -60,11 +60,6 @@ $result = mysqli_query($conn, $query);
     <div class="card-body">
         <div class="table-responsive">
             <h4 style="font-size: 24px; font-weight: bold; text-align: center;">Laporan Kadaluarsa</h4>
-            <?php
-            $start_date = date('d F Y', strtotime('-7 days'));
-            $end_date = date('d F Y');
-            ?>
-            <h5 style="font-size: 18px; font-weight: bold; text-align: center;">Periode: <?php echo $start_date . ' - ' . $end_date; ?></h5>
             <br>
 
             <table class="table">
